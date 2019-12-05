@@ -23,7 +23,7 @@ use ieee.numeric_std.all;
 library uvvm_util;
 context uvvm_util.uvvm_util_context;
 
-library STD;
+library std;
 use std.textio.all;
 
 
