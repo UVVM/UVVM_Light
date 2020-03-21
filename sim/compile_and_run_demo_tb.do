@@ -56,16 +56,10 @@ if { [string equal -nocase $simulator "modelsim"] } {
   set compdirectives "-2008 -nowarn COMP96_0564 -nowarn COMP96_0048 -dbg -work uvvm_util"
 }
 
-
 #
-# Verify that direcotory uvvm_util exists, i.e. compile.do has been run
+# Compile UVVM Util library
 #
-if {! [file exist uvvm_util]} {
-  puts "Unable to find uvvm_util library in /sim folder."
-  puts "Run compile.do in root folder to compile library."
-  exit
-}
-
+do ../script/compile.do
 
 #-----------------------------------------------------------------------
 # Compile testbench files
@@ -75,7 +69,7 @@ if {! [file exist uvvm_util]} {
 #
 #-----------------------------------------------------------------------
 vlib uvvm_util
-vmap uvvm_util uvvm_util
+#vmap uvvm_util uvvm_util
 echo "\nCompiling demo TB\n"
 
 
