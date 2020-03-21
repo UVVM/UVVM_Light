@@ -17,14 +17,14 @@ UVVM Light is a subset of UVVM, thus any issues and pull requests has to be perf
 
 ## Compilation
 Compiling UVVM Light can be done by calling the script/compile.do script from the /sim folder:
-'''sh
-$sim/ vsim -c -do ../script/compile.do
-'''
+```sh
+$ vsim -c -do ../script/compile.do
+```
 
 or from Modelsim terminal:
-'''sh
+```sh
 do ../script/compile.do
-'''
+```
 
 # Demo
 A simple demonstration testbench is provided along with UVVM Light and is located in the /sim folder. 
