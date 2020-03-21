@@ -1,13 +1,14 @@
---========================================================================================================================
--- Copyright (c) 2017 by Bitvis AS.  All rights reserved.
--- You should have received a copy of the license file containing the MIT License (see LICENSE.TXT), if not,
--- contact Bitvis AS <support@bitvis.no>.
+--================================================================================================================================
+-- Copyright 2020 Bitvis
+-- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
+-- You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 and in the provided LICENSE.TXT.
 --
--- UVVM AND ANY PART THEREOF ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
--- WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
--- OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
--- OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH UVVM OR THE USE OR OTHER DEALINGS IN UVVM.
---========================================================================================================================
+-- Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+-- an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-- See the License for the specific language governing permissions and limitations under the License.
+--================================================================================================================================
+-- Note : Any functionality not explicitly described in the documentation is subject to change at any time
+----------------------------------------------------------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------------------
 -- Description   : See library quick reference (under 'doc') and README-file(s)
@@ -44,7 +45,8 @@ package methods_pkg is
 -- ============================================================================
   procedure check_file_open_status(
     constant status      : in file_open_status;
-    constant file_name   : in string
+    constant file_name   : in string;
+    constant scope       : in string := C_SCOPE
     );
 
   procedure set_alert_file_name(
@@ -989,6 +991,9 @@ package methods_pkg is
     constant value : t_slv_array
   ) return t_slv_array;
 
+  function log2(
+    constant num : positive
+  ) return natural;
 
   -- Warning! This function should NOT be used outside the UVVM library.
   --          Function is only included to support internal functionality.
@@ -1785,18 +1790,19 @@ package body methods_pkg is
 -- ============================================================================
   procedure check_file_open_status(
     constant status      : in file_open_status;
-    constant file_name   : in string
+    constant file_name   : in string;
+    constant scope       : in string := C_SCOPE
     ) is
   begin
     case status is
       when open_ok =>
         null;  --**** logmsg (if log is open for write)
       when status_error =>
-        alert(tb_warning, "File: " & file_name & " is already open", "SCOPE_TBD");
+        alert(tb_warning, "File: " & file_name & " is already open", scope);
       when name_error =>
-        alert(tb_error, "Cannot create file: " & file_name, "SCOPE TBD");
+        alert(tb_error, "Cannot open file: " & file_name, scope);
       when mode_error =>
-        alert(tb_error, "File: " & file_name & " exists, but cannot be opened in write mode", "SCOPE TBD");
+        alert(tb_error, "File: " & file_name & " exists, but cannot be opened in write mode", scope);
     end case;
   end;
 
@@ -4343,7 +4349,16 @@ package body methods_pkg is
     return return_val;
   end function reverse_vectors_in_array;
 
-
+  function log2(
+    constant num : positive)
+  return natural is
+    variable return_val : natural := 0;
+  begin
+    while (2**return_val < num) and (return_val < 31) loop
+      return_val := return_val + 1;
+    end loop;
+    return return_val;
+  end function;
 
 -- ============================================================================
 -- Time consuming checks
