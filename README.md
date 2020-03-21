@@ -30,5 +30,5 @@ do ../script/compile.do
 A simple demonstration testbench is provided along with UVVM Light and is located in the /sim folder. 
 
 Steps to run demo:
-1.Run compile_and_run_demo.do / run_demo.bat / run_demo.sh in /sim folder
+1. Run compile_and_run_demo.do / run_demo.bat / run_demo.sh in /sim folder
 
