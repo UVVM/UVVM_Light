@@ -69,7 +69,6 @@ do ../script/compile.do
 #
 #-----------------------------------------------------------------------
 vlib uvvm_util
-#vmap uvvm_util uvvm_util
 echo "\nCompiling demo TB\n"
 
 
