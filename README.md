@@ -16,13 +16,25 @@ UVVM Light is a subset of UVVM, thus any issues and pull requests has to be perf
 
 
 ## Compilation
-Compiling UVVM Light can be done by using the compile.do script, located in the repository root folder. 
+Compiling UVVM Light can be done by calling the script/compile.do script from the /sim folder:
+```sh
+$ vsim -c -do "do ../script/compile.do [uvvm_light directory] [target directory]"
+```
+
+or from Modelsim terminal:
+```sh
+do ../script/compile.do [uvvm_light directory] [target directory]
+```
+
+Note that compile.do can have 0, 1 or 2 arguments:
+- 0 argument: uvvm_light directory is set to "..", target directory is set to "."
+- 1 argument: uvvm_light directory is set to argument, target directory is set to "."
+- 2 arguments: uvvm_light directory is set to argument 1, target directory us set to argument 2
 
 
 # Demo
-A simple demonstration testbench is provided along with UVVM Light and is located in the /sim folder. Note that libray uvvm_util has to be compiled to the /sim folder prior to running the testbench (see Compilation section above).
+A simple demonstration testbench is provided along with UVVM Light and is located in the /sim folder. 
 
 Steps to run demo:
-1. Run compile.do in repository root folder
-2. Run compile_and_run_demo.do / run_demo.bat / run_demo.sh in /sim folder
+1. Run compile_and_run_demo.do / run_demo.bat / run_demo.sh in /sim folder
 
