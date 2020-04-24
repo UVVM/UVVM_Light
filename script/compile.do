@@ -3,7 +3,7 @@
 #
 # Compiled to library uvvm_util
 #
-# Default output directory is /sim and can be changed by passing an existing 
+# Default output directory is /sim and can be changed by passing an existing
 # direcotry as argument to this script.
 #
 #====================================================================================
@@ -20,7 +20,7 @@ quietly set bfm_path src_bfm
 #-------------------------------------------------------
 # Setup
 #
-#   This section will try to setup the script for 
+#   This section will try to setup the script for
 #   running on Modelsim and Riviera Pro simulators.
 #
 #-------------------------------------------------------
@@ -72,7 +72,7 @@ if { [string equal -nocase $simulator "modelsim"] } {
 # This file may be called with 0 to 2 arguments:
 #
 #   0 args: script is called from uvvm_light/sim folder.
-#   1 args: directory for uvvm_light is specified, 
+#   1 args: directory for uvvm_light is specified,
 #           target will be current directory.
 #   2 args: directory for uvvm_light is specified
 #           and target directory specified.
@@ -83,8 +83,10 @@ if { [info exists 1] } {
   if {$argc == 1} {
     echo "\nUser specified uvvm_light directory"
     quietly set target_path "."
+    quietly set source_path "$1"
   } elseif {$argc >= 2} {
     echo "\nUser specified uvvm_light and target directory"
+    quietly set source_path "$1"
     quietly set target_path "$2"
   }
   unset 1
