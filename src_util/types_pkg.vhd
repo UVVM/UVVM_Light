@@ -50,7 +50,7 @@ package types_pkg is
   type t_info_target is (LOG_INFO, ALERT_INFO, USER_INFO);
   type t_alert_level is (NO_ALERT, NOTE, TB_NOTE, WARNING, TB_WARNING, MANUAL_CHECK, ERROR, TB_ERROR, FAILURE, TB_FAILURE);
 
-  type t_enabled      is (ENABLED, DISABLED);
+  type t_enabled      is (ENABLED, DISABLED, NA);
   type t_attention    is (REGARD, EXPECT, IGNORE);
   type t_radix        is (BIN, HEX, DEC, HEX_BIN_IF_INVALID);
   type t_radix_prefix is (EXCL_RADIX, INCL_RADIX);
@@ -58,6 +58,8 @@ package types_pkg is
   type t_ascii_allow  is (ALLOW_ALL, ALLOW_PRINTABLE_ONLY);
   type t_blocking_mode is (BLOCKING, NON_BLOCKING);
   type t_from_point_in_time is (FROM_NOW, FROM_LAST_EVENT);
+  type t_vvc_select   is (ANY_OF, ALL_OF, ALL_VVCS);
+  type t_list_action  is (KEEP_LIST, CLEAR_LIST);
 
   type t_format_zeros  is (AS_IS, KEEP_LEADING_0, SKIP_LEADING_0);  -- AS_IS is deprecated and will be removed. Use KEEP_LEADING_0.
   type t_format_string is (AS_IS, TRUNCATE, SKIP_LEADING_SPACE);    -- Deprecated, will be removed.
@@ -86,7 +88,7 @@ package types_pkg is
   type t_when_to_start_transfer is (START_TRANSFER_IMMEDIATE, START_TRANSFER_ON_NEXT_SS);
   type t_action_between_words is (RELEASE_LINE_BETWEEN_WORDS, HOLD_LINE_BETWEEN_WORDS);
 
-  type t_byte_endianness is (LOWER_BYTE_LEFT, LOWER_BYTE_RIGHT, LOWER_WORD_LEFT, LOWER_WORD_RIGHT);
+  type t_byte_endianness is (LOWER_BYTE_LEFT, LOWER_BYTE_RIGHT, LOWER_WORD_LEFT, LOWER_WORD_RIGHT, FIRST_BYTE_LEFT, FIRST_BYTE_RIGHT);
   alias t_word_endianness is t_byte_endianness;
 
   type t_pulse_continuation is (ALLOW_PULSE_CONTINUATION, NO_PULSE_CONTINUATION_ALLOWED);
@@ -175,13 +177,22 @@ package types_pkg is
     STOP_BITS_TWO
   );
 
+
+  type t_check_type is (CHECK_VALUE, 
+                        CHECK_VALUE_IN_RANGE, 
+                        CHECK_STABLE,
+                        CHECK_TIME_WINDOW);
+  type t_check_counters_array is array (CHECK_VALUE to t_check_type'right) of natural;
+
+
+
   -------------------------------------
   -- BFMs and above
   -------------------------------------
   type t_transaction_result is (ACK, NAK, ERROR);  -- add more when needed
 
   type t_hierarchy_alert_level_print is array (NOTE to t_alert_level'right) of boolean;
-  constant C_HIERARCHY_NODE_NAME_LENGTH : natural := 20;
+  constant C_HIERARCHY_NODE_NAME_LENGTH : natural := 30; -- Maximum scope length, has to match C_LOG_SCOPE_WIDTH in adaptations_pkg
   type t_hierarchy_node is
       record
         name : string(1 to C_HIERARCHY_NODE_NAME_LENGTH);
@@ -214,9 +225,10 @@ package types_pkg is
     SYNC_WITH_SETUP_AND_HOLD
   );
 
-  type t_use_provided_msg_id_panel is (USE_PROVIDED_MSG_ID_PANEL, DO_NOT_USE_PROVIDED_MSG_ID_PANEL);
-
   type t_test_status is (NA, PASS, FAIL);
+  
+  type t_activity is (ACTIVE, INACTIVE);
+
   
   -------------------------------------
   -- SB
