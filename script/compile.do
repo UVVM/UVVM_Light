@@ -141,6 +141,18 @@ eval vcom $compdirectives $source_path/$util_path/methods_pkg.vhd
 echo "eval vcom $compdirectives $source_path/$util_path/bfm_common_pkg.vhd"
 eval vcom $compdirectives $source_path/$util_path/bfm_common_pkg.vhd
 
+echo "eval vcom $compdirectives $source_path/$util_path/generic_queue_pkg.vhd"
+eval vcom $compdirectives $source_path/$util_path/generic_queue_pkg.vhd
+
+echo "eval vcom $compdirectives $source_path/$util_path/data_queue_pkg.vhd"
+eval vcom $compdirectives $source_path/$util_path/data_queue_pkg.vhd
+
+echo "eval vcom $compdirectives $source_path/$util_path/data_fifo_pkg.vhd"
+eval vcom $compdirectives $source_path/$util_path/data_fifo_pkg.vhd
+
+echo "eval vcom $compdirectives $source_path/$util_path/data_stack_pkg.vhd"
+eval vcom $compdirectives $source_path/$util_path/data_stack_pkg.vhd
+
 echo "eval vcom $compdirectives $source_path/$util_path/uvvm_util_context.vhd"
 eval vcom $compdirectives $source_path/$util_path/uvvm_util_context.vhd
 
