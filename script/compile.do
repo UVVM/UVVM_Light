@@ -8,15 +8,6 @@
 #
 #====================================================================================
 
-#
-# Define library name, UVVM Util path and BFM path.
-#
-quietly set library_name uvvm_util
-quietly set util_path src_util
-quietly set bfm_path src_bfm
-
-
-
 #-------------------------------------------------------
 # Setup
 #
@@ -36,6 +27,13 @@ proc quietly { args } {
     uplevel $args; list;
   }
 }
+
+#
+# Define library name, UVVM Util path and BFM path.
+#
+quietly set library_name uvvm_util
+quietly set util_path src_util
+quietly set bfm_path src_bfm
 
 #
 # Detect simulator
