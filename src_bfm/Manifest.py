@@ -1,0 +1,12 @@
+files = ['avalon_mm_bfm_pkg.vhd',
+         'avalon_st_bfm_pkg.vhd',
+         'axilite_bfm_pkg.vhd',
+         'axistream_bfm_pkg.vhd',
+         'gmii_bfm_pkg.vhd',
+         'gpio_bfm_pkg.vhd',
+         'i2c_bfm_pkg.vhd',
+         'rgmii_bfm_pkg.vhd',
+         'sbi_bfm_pkg.vhd',
+         'spi_bfm_pkg.vhd',
+         'uart_bfm_pkg.vhd',
+]

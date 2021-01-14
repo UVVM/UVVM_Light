@@ -1,0 +1,1 @@
+See VERSION.txt in UVVM (https://github.com/UVVM/UVVM) for version
