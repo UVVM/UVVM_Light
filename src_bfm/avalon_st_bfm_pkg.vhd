@@ -49,8 +49,7 @@ package avalon_st_bfm_pkg is
   end record;
 
   -- Configuration record to be assigned in the test harness.
-  type t_avalon_st_bfm_config is
-  record
+  type t_avalon_st_bfm_config is record
     max_wait_cycles             : natural;            -- Used for setting the maximum cycles to wait before an alert is issued when
                                                       -- waiting for ready or valid signals from the DUT.
     max_wait_cycles_severity    : t_alert_level;      -- Severity if max_wait_cycles expires.
@@ -688,7 +687,7 @@ package body avalon_st_bfm_pkg is
     for symbol in v_rx_data_array'high downto 0 loop
       for i in v_rx_data_array(symbol)'range loop
         -- Allow don't care in expected value and use match strictness from config for comparison
-        if v_normalized_data(symbol)(i) = '-' or check_value(v_rx_data_array(symbol)(i), v_normalized_data(symbol)(i), config.match_strictness, NO_ALERT, msg) then
+        if v_normalized_data(symbol)(i) = '-' or check_value(v_rx_data_array(symbol)(i), v_normalized_data(symbol)(i), config.match_strictness, NO_ALERT, msg, scope, ID_NEVER) then
           -- Check is OK
         else
           -- Received symbol doesn't match
@@ -701,7 +700,7 @@ package body avalon_st_bfm_pkg is
     -- Done. Report result
     if v_data_error_cnt /= 0 then
       -- Use binary representation when mismatch is due to weak signals
-      v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_rx_data_array(v_first_wrong_symbol), v_normalized_data(v_first_wrong_symbol), MATCH_STD, NO_ALERT, msg) else HEX;
+      v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_rx_data_array(v_first_wrong_symbol), v_normalized_data(v_first_wrong_symbol), MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
       alert(alert_level, proc_call & "=> Failed in "& to_string(v_data_error_cnt) & " data bits. First mismatch in symbol# " &
         to_string(v_first_wrong_symbol) & ". Was " & to_string(v_rx_data_array(v_first_wrong_symbol), v_alert_radix, AS_IS, INCL_RADIX) &
         ". Expected " & to_string(v_normalized_data(v_first_wrong_symbol), v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);

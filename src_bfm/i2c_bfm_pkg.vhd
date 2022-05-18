@@ -42,8 +42,7 @@ package i2c_bfm_pkg is
   end record;
 
   -- Configuration record to be assigned in the test harness.
-  type t_i2c_bfm_config is
-  record
+  type t_i2c_bfm_config is record
     enable_10_bits_addressing       : boolean;              -- true: 10-bit addressing enabled, false : 7-bit addressing enabled
     master_sda_to_scl               : time;                 -- Used in master mode, start condition. From sda active to scl active.
     master_scl_to_sda               : time;                 -- Used in master mode, stop condition. From scl inactive to sda inactive.
@@ -1499,7 +1498,7 @@ package body i2c_bfm_pkg is
     if to_X01(sda) = '1' and to_X01(scl) = '1' then
       -- await the start condition
       await_value(sda, '0', 0 ns, config.max_wait_sda_change + config.max_wait_sda_change/100, config.max_wait_sda_change_severity, msg, scope, ID_NEVER, msg_id_panel);
-      await_value(scl, '0', 0 ns, config.max_wait_scl_change + config.max_wait_scl_change/100, config.max_wait_scl_change_severity, msg, scope, ID_NEVER, msg_id_panel);
+      await_value(scl, '0', 0 ns, config.master_sda_to_scl + config.master_sda_to_scl/100, config.max_wait_scl_change_severity, msg, scope, ID_NEVER, msg_id_panel);
 
       if sda = '0' then
         if not config.enable_10_bits_addressing then
@@ -1653,7 +1652,7 @@ package body i2c_bfm_pkg is
     for byte in data_exp'range loop
       for i in data_exp(byte)'range loop
         -- Allow don't care in expected value and use match strictness from config for comparison
-        if data_exp(byte)(i) = '-' or check_value(v_data_array(byte)(i), data_exp(byte)(i), config.match_strictness, NO_ALERT, msg) then
+        if data_exp(byte)(i) = '-' or check_value(v_data_array(byte)(i), data_exp(byte)(i), config.match_strictness, NO_ALERT, msg, scope, ID_NEVER) then
           v_byte_ok := true;
         else
           v_byte_ok := false;
@@ -1663,7 +1662,7 @@ package body i2c_bfm_pkg is
 
       if not v_byte_ok then
         -- Use binary representation when mismatch is due to weak signals
-        v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_data_array(byte), data_exp(byte), MATCH_STD, NO_ALERT, msg) else HEX;
+        v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_data_array(byte), data_exp(byte), MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
         alert(alert_level, proc_call & "=> Failed. Was " & to_string(v_data_array(byte), v_alert_radix, AS_IS, INCL_RADIX) & ". Expected " & to_string(data_exp(byte), v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
         v_check_ok := false;
       end if;
@@ -1747,7 +1746,7 @@ package body i2c_bfm_pkg is
     for byte in data_exp'range loop
       for i in data_exp(byte)'range loop
         -- Allow don't care in expected value and use match strictness from config for comparison
-        if data_exp(byte)(i) = '-' or check_value(v_data_array(byte)(i), data_exp(byte)(i), config.match_strictness, NO_ALERT, msg) then
+        if data_exp(byte)(i) = '-' or check_value(v_data_array(byte)(i), data_exp(byte)(i), config.match_strictness, NO_ALERT, msg, scope, ID_NEVER) then
           v_byte_ok := true;
         else
           v_byte_ok := false;
@@ -1757,7 +1756,7 @@ package body i2c_bfm_pkg is
 
       if not v_byte_ok then
         -- Use binary representation when mismatch is due to weak signals
-        v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_data_array(byte), data_exp(byte), MATCH_STD, NO_ALERT, msg) else HEX;
+        v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_data_array(byte), data_exp(byte), MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
         alert(alert_level, proc_call & "=> Failed. Was " & to_string(v_data_array(byte), v_alert_radix, AS_IS, INCL_RADIX) & ". Expected " & to_string(data_exp(byte), v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
         v_check_ok := false;
       end if;

@@ -57,8 +57,7 @@ package avalon_mm_bfm_pkg is
 
 
   -- Configuration record to be assigned in the test harness.
-  type t_avalon_mm_bfm_config is
-  record
+  type t_avalon_mm_bfm_config is record
     max_wait_cycles           : integer;            -- Sets the maximum number of wait cycles before an alert occurs when waiting for readdatavalid or stalling because of waitrequest
     max_wait_cycles_severity  : t_alert_level;      -- The above timeout will have this severity
     clock_period              : time;               -- Period of the clock signal.
@@ -601,7 +600,7 @@ package body avalon_mm_bfm_pkg is
     avalon_mm_if <= init_avalon_mm_if_signals(avalon_mm_if.address'length, avalon_mm_if.writedata'length, avalon_mm_if.lock) after v_clock_period/4;
 
     if ext_proc_call = "" then
-      log(ID_BFM, v_proc_call.all & " completed. " & add_msg_delimiter(msg), scope, msg_id_panel);
+      log(config.id_for_bfm, v_proc_call.all & " completed. " & add_msg_delimiter(msg), scope, msg_id_panel);
     else
       -- Log will be handled by calling procedure (e.g. avalon_mm_check)
     end if;
@@ -705,7 +704,7 @@ package body avalon_mm_bfm_pkg is
 
     for i in v_normalized_data'range loop
       -- Allow don't care in expected value and use match strictness from config for comparison
-      if v_normalized_data(i) = '-' or check_value(v_data_value(i), v_normalized_data(i), config.match_strictness, NO_ALERT, msg) then
+      if v_normalized_data(i) = '-' or check_value(v_data_value(i), v_normalized_data(i), config.match_strictness, NO_ALERT, msg, scope, ID_NEVER) then
         v_check_ok := true;
       else
         v_check_ok := false;
@@ -715,7 +714,7 @@ package body avalon_mm_bfm_pkg is
 
     if not v_check_ok then
       -- Use binary representation when mismatch is due to weak signals
-      v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_data_value, v_normalized_data, MATCH_STD, NO_ALERT, msg) else HEX;
+      v_alert_radix := BIN when config.match_strictness = MATCH_EXACT and check_value(v_data_value, v_normalized_data, MATCH_STD, NO_ALERT, msg, scope, HEX_BIN_IF_INVALID, KEEP_LEADING_0, ID_NEVER) else HEX;
       alert(alert_level, proc_call & "=> Failed. Was " & to_string(v_data_value, v_alert_radix, AS_IS, INCL_RADIX) & ". Expected " & to_string(v_normalized_data, v_alert_radix, AS_IS, INCL_RADIX) & "." & LF & add_msg_delimiter(msg), scope);
     else
       log(config.id_for_bfm, proc_call & "=> OK, received data = " & to_string(v_normalized_data, HEX, SKIP_LEADING_0, INCL_RADIX) & ". " & add_msg_delimiter(msg), scope, msg_id_panel);
