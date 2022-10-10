@@ -12,7 +12,7 @@ UVVM Light consists currently of the following elements:
 
 
 ## Issues and pull requests
-UVVM Light is a subset of UVVM, thus any issues and pull requests has to be performed on the [UVVM repository](https://github.com/UVVM/UVVM). 
+UVVM Light is a subset of UVVM v2, thus any issues and pull requests has to be performed on the [UVVM repository](https://github.com/UVVM/UVVM). 
 
 
 ## Compilation
