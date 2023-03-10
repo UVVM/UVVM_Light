@@ -154,7 +154,7 @@ def test_compilation(current_dir):
         sys.exit(1)
 
 
-def publish_github():
+def publish_github(commit_msg : str = None):
     print("""\n
     Preparing for publishing of changes to UVVM_Light:
     ----------------------------------------------------
@@ -165,8 +165,11 @@ def publish_github():
     \n
     """)
 
-    date_tag = date.today().strftime("%y.%m.%d")
-    commit_msg = '"Updated to UVVM v2022.05.05"'  # + date_tag + '"'
+    
+    
+    if commit_msg is None:
+      date_tag = date.today().strftime("%y.%m.%d")
+      commit_msg = '"Updated to UVVM v%s"' % (date_tag)
 
     print("Setting up remote GitHub UVVM Light")
     uvvm_light_remote = "git remote add uvvm_light_remote git@github.com:UVVM/UVVM_Light.git"
