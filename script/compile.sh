@@ -29,8 +29,8 @@ echo ""
 
 compile_file()
 {
-echo "Running: $TARGT_PATH ghdl -a -frelaxed-rules --std=08 -Wno-hide -Wno-shared --work=uvvm_util $SRC_PATH/$part_path/$file_name"
-ghdl -a -frelaxed-rules --std=08 -Wno-hide -Wno-shared --work=$COMPILE_LIB $SRC_PATH/$part_path/$file_name
+echo "Running: $TARGT_PATH ghdl -a --std=08 -frelaxed-rules -Wno-hide -Wno-shared --work=uvvm_util $SRC_PATH/$part_path/$file_name"
+ghdl -a --std=08 -frelaxed-rules -Wno-hide -Wno-shared --work=$COMPILE_LIB $SRC_PATH/$part_path/$file_name
 }
 
 
@@ -47,6 +47,9 @@ util_file_list='types_pkg.vhd
         license_pkg.vhd
         methods_pkg.vhd
         bfm_common_pkg.vhd
+        generic_queue_pkg.vhd
+        rand_pkg.vhd
+        func_cov_pkg.vhd
         uvvm_util_context.vhd'
 
 COMPILE_LIB="uvvm_util"
