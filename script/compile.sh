@@ -33,24 +33,42 @@ echo "Running: $TARGT_PATH ghdl -a --std=08 -frelaxed-rules -Wno-hide -Wno-share
 ghdl -a --std=08 -frelaxed-rules -Wno-hide -Wno-shared --work=$COMPILE_LIB $SRC_PATH/$part_path/$file_name
 }
 
-
-
-
 # Compile UVVM Util
-util_file_list='types_pkg.vhd
-        adaptations_pkg.vhd
-        string_methods_pkg.vhd 
-        protected_types_pkg.vhd
-        global_signals_and_shared_variables_pkg.vhd
-        hierarchy_linked_list_pkg.vhd
-        alert_hierarchy_pkg.vhd
-        license_pkg.vhd
-        methods_pkg.vhd
-        bfm_common_pkg.vhd
-        generic_queue_pkg.vhd
-        rand_pkg.vhd
-        func_cov_pkg.vhd
-        uvvm_util_context.vhd'
+#util_file_list='types_pkg.vhd
+#        adaptations_pkg.vhd
+#        string_methods_pkg.vhd 
+#        protected_types_pkg.vhd
+#        global_signals_and_shared_variables_pkg.vhd
+#        hierarchy_linked_list_pkg.vhd
+#        alert_hierarchy_pkg.vhd
+#        license_pkg.vhd
+#        methods_pkg.vhd
+#        bfm_common_pkg.vhd
+#        generic_queue_pkg.vhd
+#        rand_pkg.vhd
+#        func_cov_pkg.vhd
+#        uvvm_util_context.vhd'
+
+util_file_list='
+  types_pkg.vhd
+  adaptations_pkg.vhd
+  string_methods_pkg.vhd
+  protected_types_pkg.vhd
+  global_signals_and_shared_variables_pkg.vhd
+  hierarchy_linked_list_pkg.vhd
+  alert_hierarchy_pkg.vhd
+  license_pkg.vhd
+  methods_pkg.vhd
+  bfm_common_pkg.vhd
+  generic_queue_pkg.vhd
+  data_queue_pkg.vhd
+  data_fifo_pkg.vhd
+  data_stack_pkg.vhd
+  rand_pkg.vhd
+  func_cov_pkg.vhd
+  uvvm_util_context.vhd'
+
+
 
 COMPILE_LIB="uvvm_util"
 
