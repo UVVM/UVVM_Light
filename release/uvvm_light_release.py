@@ -233,7 +233,7 @@ def main():
     cleanup()
 
     print("\nPublishing release changes to GitHub")
-    publish_github()
+    publish_github("Updated to UVVM Light version v2 2024.08.16 - Please see CHANGES.TXT for details.")
 
     print("==========================================================================")
     print(" UVVM_Light RELEASE DONE\n")
