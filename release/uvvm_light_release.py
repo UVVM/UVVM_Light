@@ -110,11 +110,15 @@ def locate_files_to_copy():
     files_to_copy += [filename for filename in glob.glob(
         "./uvvm/uvvm_util/doc/*.pdf")]
     files_to_copy += [filename for filename in glob.glob(
+        "./uvvm/uvvm_util/doc/*.html")]
+    files_to_copy += [filename for filename in glob.glob(
         "./uvvm/uvvm_util/doc/*.pps")]
 
     print('Locating BFM src files.')
     files_to_copy += [filename for filename in glob.glob(
         "./uvvm/bitvis_*/doc/*bfm*.pdf")]
+    files_to_copy += [filename for filename in glob.glob(
+        "./uvvm/bitvis_*/doc/*bfm*.html")]
     files_to_copy += [filename for filename in glob.glob(
         "./uvvm/bitvis_*/src/*bfm*.vhd")]
 
