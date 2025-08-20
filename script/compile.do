@@ -151,11 +151,23 @@ eval vcom $compdirectives $source_path/$util_path/data_fifo_pkg.vhd
 echo "eval vcom $compdirectives $source_path/$util_path/data_stack_pkg.vhd"
 eval vcom $compdirectives $source_path/$util_path/data_stack_pkg.vhd
 
+echo "eval vcom $compdirectives $source_path/$util_path/dummy_rand_extension_pkg.vhd"
+eval vcom $compdirectives $source_path/$util_path/dummy_rand_extension_pkg.vhd
+
 echo "eval vcom $compdirectives $source_path/$util_path/rand_pkg.vhd"
 eval vcom $compdirectives $source_path/$util_path/rand_pkg.vhd
 
+echo "eval vcom $compdirectives $source_path/$util_path/dummy_func_cov_extension_pkg.vhd"
+eval vcom $compdirectives $source_path/$util_path/dummy_func_cov_extension_pkg.vhd
+
+echo "eval vcom $compdirectives $source_path/$util_path/dummy_func_cov_ucdb_pkg.vhd"
+eval vcom $compdirectives $source_path/$util_path/dummy_func_cov_ucdb_pkg.vhd
+
 echo "eval vcom $compdirectives $source_path/$util_path/func_cov_pkg.vhd"
 eval vcom $compdirectives $source_path/$util_path/func_cov_pkg.vhd
+
+echo "eval vcom $compdirectives $source_path/$util_path/uvvm_assertions_pkg.vhd"
+eval vcom $compdirectives $source_path/$util_path/uvvm_assertions_pkg.vhd
 
 echo "eval vcom $compdirectives $source_path/$util_path/uvvm_util_context.vhd"
 eval vcom $compdirectives $source_path/$util_path/uvvm_util_context.vhd

@@ -87,24 +87,29 @@ Default value for the record is C_AXI_BFM_CONFIG_DEFAULT.
 |                              |                              |                 | is clock_period/4. An alert is reported if      |
 |                              |                              |                 | hold_time exceeds clock_period/2.               |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| bfm_sync                     | :ref:`t_bfm_sync`            | SYNC_ON_CLOCK_O\| | When set to SYNC_ON_CLOCK_ONLY the BFM will   |
-|                              |                              | NLY             |   enter on the first falling edge, estimate the |
-|                              |                              |                 |   clock period,                                 |
-|                              |                              |                 | | synchronize the output signals and exit ¼     |
-|                              |                              |                 |   clock period after a succeeding rising edge.  |
-|                              |                              |                 | | When set to SYNC_WITH_SETUP_AND_HOLD the BFM  |
-|                              |                              |                 |   will use the configured setup_time, hold_time |
-|                              |                              |                 |   and                                           |
-|                              |                              |                 | | clock_period to synchronize output signals    |
-|                              |                              |                 |   with clock edges.                             |
+| bfm_sync                     | :ref:`t_bfm_sync`            | SYNC_ON_CLOCK_O\| When set to SYNC_ON_CLOCK_ONLY the BFM will     |
+|                              |                              | NLY             | enter on the first falling edge, estimate the   |
+|                              |                              |                 | clock period,                                   |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | synchronize the output signals and exit ¼       |
+|                              |                              |                 | clock period after a succeeding rising edge.    |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | When set to SYNC_WITH_SETUP_AND_HOLD the BFM    |
+|                              |                              |                 | will use the configured setup_time, hold_time   |
+|                              |                              |                 | and                                             |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | clock_period to synchronize output signals      |
+|                              |                              |                 | with clock edges.                               |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| match_strictness             | :ref:`t_match_strictness`    | MATCH_EXACT     | | Matching strictness for std_logic values in   |
-|                              |                              |                 |   check procedures.                             |
-|                              |                              |                 | | MATCH_EXACT requires both values to be the    |
-|                              |                              |                 |   same. Note that the expected value can contain|
-|                              |                              |                 |   the don't care operator '-'.                  |
-|                              |                              |                 | | MATCH_STD allows comparisons between 'H' and  |
-|                              |                              |                 |   '1', 'L' and '0' and '-' in both values.      |
+| match_strictness             | :ref:`t_match_strictness`    | MATCH_EXACT     | Matching strictness for std_logic values in     |
+|                              |                              |                 | check procedures.                               |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | MATCH_EXACT requires both values to be the      |
+|                              |                              |                 | same. Note that the expected value can contain  |
+|                              |                              |                 | the don't care operator '-'.                    |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | MATCH_STD allows comparisons between 'H' and    |
+|                              |                              |                 | '1', 'L' and '0' and '-' in both values.        |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | num_aw_pipe_stages           | natural                      | 1               | Write Address Channel pipeline steps            |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
@@ -119,9 +124,9 @@ Default value for the record is C_AXI_BFM_CONFIG_DEFAULT.
 | id_for_bfm                   | t_msg_id                     | ID_BFM          | Message ID used for logging general messages in |
 |                              |                              |                 | the BFM                                         |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| id_for_bfm_wait              | t_msg_id                     | ID_BFM_WAIT     | Message ID used for logging waits in the BFM    |
+| id_for_bfm_wait              | t_msg_id                     | ID_BFM_WAIT     | DEPRECATED                                      |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| id_for_bfm_poll              | t_msg_id                     | ID_BFM_POLL     | Message ID used for logging polling in the BFM  |
+| id_for_bfm_poll              | t_msg_id                     | ID_BFM_POLL     | DEPRECATED                                      |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 
 Methods
@@ -518,7 +523,7 @@ bid, arid and rid shares a common width (id_width) and that awuser, buser, aruse
 .. code-block::
 
     -- Examples:
-    axi_if <= init_axi_if_signals(addr_width, data_width, id_width, user_width)
+    axi_if <= init_axi_if_signals(addr_width, data_width, id_width, user_width);
 
 
 Local types
@@ -649,26 +654,36 @@ t_axi_read_data_channel
 
 t_axburst
 ----------------------------------------------------------------------------------------------------------------------------------
-FIXED, INCR, WRAP
+.. code-block::
+
+    FIXED, INCR, WRAP
 
 t_axlock
 ----------------------------------------------------------------------------------------------------------------------------------
-NORMAL, EXCLUSIVE
+.. code-block::
+
+    NORMAL, EXCLUSIVE
 
 t_axprot
 ----------------------------------------------------------------------------------------------------------------------------------
-UNPRIVILEGED_NONSECURE_DATA, UNPRIVILEGED_NONSECURE_INSTRUCTION, UNPRIVILEGED_SECURE_DATA, UNPRIVILEGED_SECURE_INSTRUCTION, 
-PRIVILEGED_NONSECURE_DATA, PRIVILEGED_NONSECURE_INSTRUCTION, PRIVILEGED_SECURE_DATA, PRIVILEGED_SECURE_INSTRUCTION
+.. code-block::
+
+    UNPRIVILEGED_NONSECURE_DATA, UNPRIVILEGED_NONSECURE_INSTRUCTION, UNPRIVILEGED_SECURE_DATA, UNPRIVILEGED_SECURE_INSTRUCTION, 
+    PRIVILEGED_NONSECURE_DATA, PRIVILEGED_NONSECURE_INSTRUCTION, PRIVILEGED_SECURE_DATA, PRIVILEGED_SECURE_INSTRUCTION
 
 t_xresp
 ----------------------------------------------------------------------------------------------------------------------------------
-OKAY, EXOKAY, SLVERR, DECERR, ILLEGAL
+.. code-block::
+
+    OKAY, EXOKAY, SLVERR, DECERR, ILLEGAL
 
 .. _t_xresp_array:
 
 t_xresp_array
 ----------------------------------------------------------------------------------------------------------------------------------
-array (natural range <>) of t_xresp;
+.. code-block::
+
+    array (natural range <>) of t_xresp;
 
 
 Local BFM overloads
@@ -865,16 +880,19 @@ Configuration Record
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | Record element               | Type                         | Default         | Description                                     |
 +==============================+==============================+=================+=================================================+
-| inter_bfm_delay              | :ref:`t_inter_bfm_delay`     | C_AXI_INTER_BFM\| | Delay between any requested BFM accesses      |
-|                              |                              | _DELAY_DEFAULT  |   towards the DUT.                              |
-|                              |                              |                 | | TIME_START2START: Time from a BFM start to the|
-|                              |                              |                 |   next BFM start (a TB_WARNING will be issued if|
-|                              |                              |                 |   access takes longer than TIME_START2START).   |
-|                              |                              |                 | | TIME_FINISH2START: Time from a BFM end to the |
-|                              |                              |                 |   next BFM start.                               |
-|                              |                              |                 | | Any insert_delay() command will add to the    |
-|                              |                              |                 |   above minimum delays, giving for instance the |
-|                              |                              |                 |   ability to skew the BFM starting time.        |
+| inter_bfm_delay              | :ref:`t_inter_bfm_delay`     | C_AXI_INTER_BFM\| Delay between any requested BFM accesses        |
+|                              |                              | _DELAY_DEFAULT  | towards the DUT.                                |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | TIME_START2START: Time from a BFM start to the  |
+|                              |                              |                 | next BFM start (a TB_WARNING will be issued if  |
+|                              |                              |                 | access takes longer than TIME_START2START).     |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | TIME_FINISH2START: Time from a BFM end to the   |
+|                              |                              |                 | next BFM start.                                 |
+|                              |                              |                 |                                                 |
+|                              |                              |                 | Any insert_delay() command will add to the      |
+|                              |                              |                 | above minimum delays, giving for instance the   |
+|                              |                              |                 | ability to skew the BFM starting time.          |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 | cmd_queue_count_max          | natural                      | C_CMD_QUEUE_COU\| Maximum pending number in command queue before  |
 |                              |                              | NT_MAX          | queue is full. Adding additional commands will  |
@@ -922,8 +940,8 @@ Configuration Record
 
 The configuration record can be accessed from the Central Testbench Sequencer through the shared variable array, e.g. ::
 
-    shared_axi_vvc_config(1).inter_bfm_delay.delay_in_time := 50 ns;
-    shared_axi_vvc_config(1).bfm_config.clock_period := 10 ns;
+    shared_axi_vvc_config(C_VVC_IDX).inter_bfm_delay.delay_in_time := 50 ns;
+    shared_axi_vvc_config(C_VVC_IDX).bfm_config.clock_period := 10 ns;
 
 Status Record
 ==================================================================================================================================

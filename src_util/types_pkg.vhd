@@ -28,6 +28,7 @@ package types_pkg is
 
   type t_void is (VOID);
 
+  type t_boolean_array is array (natural range <>) of boolean;
   type t_natural_array is array (natural range <>) of natural;
   type t_integer_array is array (natural range <>) of integer;
   type t_slv_array is array (natural range <>) of std_logic_vector;
@@ -89,8 +90,6 @@ package types_pkg is
   -- FIRST_BYTE_LEFT and FIRST_BYTE_RIGHT are deprecated and will be removed in next major release
   type t_byte_endianness is (LOWER_BYTE_LEFT, LOWER_BYTE_RIGHT, LOWER_WORD_LEFT, LOWER_WORD_RIGHT, FIRST_BYTE_LEFT, FIRST_BYTE_RIGHT);
   alias t_word_endianness is t_byte_endianness;
-
-  type t_pulse_continuation is (ALLOW_PULSE_CONTINUATION, NO_PULSE_CONTINUATION_ALLOWED);
 
   type t_coverage_representation is (NO_GOAL, GOAL_CAPPED, GOAL_UNCAPPED);
 
@@ -244,17 +243,6 @@ package types_pkg is
   constant ALL_INSTANCES         : integer := -2;
   constant ALL_ENABLED_INSTANCES : integer := -3;
 
-  type t_vvc_state is record
-    activity                 : t_activity;
-    last_cmd_idx_executed    : integer;
-    await_selected_supported : boolean;
-  end record;
-  constant C_VVC_STATE_DEFAULT : t_vvc_state := (
-    activity                 => INACTIVE,
-    last_cmd_idx_executed    => -1,
-    await_selected_supported => true
-  );
-
   -------------------------------------
   -- Scoreboard
   -------------------------------------
@@ -273,6 +261,16 @@ package types_pkg is
   -- These values are used to indicate outdated sub-programs
   constant C_DEPRECATE_SETTING               : t_deprecate_setting := DEPRECATE_ONCE;
   shared variable deprecated_subprogram_list : t_deprecate_list    := (others => (others => ' '));
+
+  type t_relational_operator is (LT, GT, EQ, LE, GE, NE);
+  type t_arithmetic_operator is (ADD, SUB, MULT, DIV);
+
+  -----------------------------------------
+  -- UVVM ASSERTIONS
+  -----------------------------------------
+  type t_pos_ack_kind is (EVERY, FIRST);
+  type t_shift_one_ness_cond is (ANY_BIT_ALERT, LAST_BIT_ALERT, ANY_BIT_ALERT_NO_PIPE, LAST_BIT_ALERT_NO_PIPE);
+  type t_accept_all_zeros is (ALL_ZERO_ALLOWED, ALL_ZERO_NOT_ALLOWED);
 
 end package types_pkg;
 

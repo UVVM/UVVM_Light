@@ -92,9 +92,9 @@ check_value_in_range()
 Checks if min_value ≤ val ≤ max_value, and alerts with severity alert_level if val is outside the range. The result of the check 
 is returned as a boolean if the method is called as a function. ::
 
-    [boolean :=] check_value_in_range(value(u), min_value(u), max_value(u), [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
-    [boolean :=] check_value_in_range(value(s), min_value(s), max_value(s), [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
-    [boolean :=] check_value_in_range(value(int), min_value(int), max_value(int), [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
+    [boolean :=] check_value_in_range(value(u), min_value(u), max_value(u), [alert_level], msg, [scope, [msg_id, [msg_id_panel, [radix, [prefix]]]]])
+    [boolean :=] check_value_in_range(value(s), min_value(s), max_value(s), [alert_level], msg, [scope, [msg_id, [msg_id_panel, [radix, [prefix]]]]])
+    [boolean :=] check_value_in_range(value(int), min_value(int), max_value(int), [alert_level], msg, [scope, [msg_id, [msg_id_panel, [radix, [prefix]]]]])
     [boolean :=] check_value_in_range(value(time), min_value(time), max_value(time), [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
     [boolean :=] check_value_in_range(value(real), min_value(real), max_value(real), [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
 
@@ -119,6 +119,14 @@ is returned as a boolean if the method is called as a function. ::
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default    |
 |          |                    |        |                              | value is shared_msg_id_panel.                           |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | radix              | in     | t_radix                      | Radix used in the log.                                  |
+|          |                    |        |                              | Default is DEC for integer and HEX_BIN_IF_INVALID for   |
+|          |                    |        |                              | signed and unsigned.                                    |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | prefix             | in     | t_radix_prefix               | Include/exclude radix prefix in the log.                |
+|          |                    |        |                              | Default is EXCL_RADIX for integer and INCL_RADIX for    |
+|          |                    |        |                              | signed and unsigned.                                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -286,6 +294,12 @@ see await_change_to_value() under. ::
 | constant | scope              | in     | string                       | Describes the scope from which the log/alert originates.|
 |          |                    |        |                              | Default value is C_TB_SCOPE_DEFAULT.                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | radix              | in     | :ref:`t_radix`               | Controls how the vector is represented in the log.      |
+|          |                    |        |                              | Default value is HEX_BIN_IF_INVALID.                    |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
+| constant | format             | in     | :ref:`t_format_zeros`        | Controls how the vector is formatted in the log. Default|
+|          |                    |        |                              | value is KEEP_LEADING_0.                                |
++----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg_id             | in     | t_msg_id                     | Message ID used in the log, defined in adaptations_pkg. |
 |          |                    |        |                              | Default value is ID_POS_ACK.                            |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -314,9 +328,9 @@ If the signal changes to the expected value before min_time, or the signal does 
     await_change_to_value(target(sl), exp(sl), [match_strictness], min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
     await_change_to_value(target(slv), exp(slv), [match_strictness], min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
     await_change_to_value(target(bool), exp(bool), min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
-    await_change_to_value(target(u), exp(u), min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
-    await_change_to_value(target(s), exp(s), min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
-    await_change_to_value(target(int), exp(int), min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
+    await_change_to_value(target(u), exp(u), min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel, [radix, [prefix]]]]])
+    await_change_to_value(target(s), exp(s), min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel, [radix, [prefix]]]]])
+    await_change_to_value(target(int), exp(int), min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel, [radix, [prefix]]]]])
     await_change_to_value(target(real), exp(real), min_time, max_time, [alert_level], msg, [scope, [msg_id, [msg_id_panel]]])
 
 +----------+--------------------+--------+------------------------------+-----------------------------------------------------------------------+
@@ -345,6 +359,14 @@ If the signal changes to the expected value before min_time, or the signal does 
 +----------+--------------------+--------+------------------------------+-----------------------------------------------------------------------+
 | constant | msg_id_panel       | in     | t_msg_id_panel               | Controls verbosity within a specified scope. Default                  |
 |          |                    |        |                              | value is shared_msg_id_panel.                                         |
++----------+--------------------+--------+------------------------------+-----------------------------------------------------------------------+
+| constant | radix              | in     | t_radix                      | Radix used in the log.                                                |
+|          |                    |        |                              | Default is DEC for integer and HEX_BIN_IF_INVALID for signed and      |
+|          |                    |        |                              | unsigned.                                                             |
++----------+--------------------+--------+------------------------------+-----------------------------------------------------------------------+
+| constant | prefix             | in     | t_radix_prefix               | Include/exclude radix prefix in the log.                              |
+|          |                    |        |                              | Default is EXCL_RADIX for integer and INCL_RADIX for signed and       |
+|          |                    |        |                              | unsigned.                                                             |
 +----------+--------------------+--------+------------------------------+-----------------------------------------------------------------------+
 
 .. code-block::
@@ -678,6 +700,15 @@ to NON_QUIET.
 
 Alert handling
 ==================================================================================================================================
+
+The available alert levels are defined in the type :ref:`t_alert_level`. The behavior for each type of alert can be configured in
+adaptations_pkg.vhd. The simulation will be stopped when the occurences of an alert type reaches the number configured in
+C_DEFAULT_STOP_LIMIT. By default, the simulation will be stopped after one occurence of either ERROR, TB_ERROR, FAILURE or TB_FAILURE.
+Alert levels with the prefix TB\_ are intended to be used in cases where the cause of the alert is known to be a testbench issue.
+
+The MANUAL_CHECK alert type is intended for cases where a manual check, e.g. a waveform inspection, is required. When an alert of this
+type is encountered, the simulation will be stopped and the user will be prompted to carry out a manual check before resuming the
+simulation.
 
 set_alert_file_name()
 ----------------------------------------------------------------------------------------------------------------------------------
@@ -1018,7 +1049,8 @@ Returns a random value. The function uses and updates a global seed. ::
 | constant | time_resolution    | in     | time                         | Defines how many values can be generated between        |
 |          |                    |        |                              | min_value and max_value. If the given resolution is too |
 |          |                    |        |                              | small for the range, a TB_WARNING will be printed once. |
-|          |                    |        |                              | Default value is the simulator time resolution.         |
+|          |                    |        |                              | Default value is the smallest time unit between the min |
+|          |                    |        |                              | and max parameters.                                     |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -1028,8 +1060,9 @@ Returns a random value. The function uses and updates a global seed. ::
     v_slv  := random(v_slv'length);
     v_int  := random(1, 10);
     v_real := random(0.01, 0.03);
-    v_time := random(25 us, 50 us);     -- Generates random values with the default resolution of the simulator
-    v_time := random(25 us, 50 us, us); -- Generates random values with a resolution of 1 us
+    v_time := random(25 us, 50 us);         -- Generates random values with a resolution of 1 us
+    v_time := random(25 us, 50 us, ns);     -- Generates random values with a resolution of 1 ns
+    v_time := random(25 us, 50 us, 100 ns); -- Generates random values with a resolution of 100 ns
 
 
 random() - procedure
@@ -1052,7 +1085,8 @@ Sets v_target to a random value. The procedure uses and updates v_seed1 and v_se
 | constant | time_resolution    | in     | time                         | Defines how many values can be generated between        |
 |          |                    |        |                              | min_value and max_value. If the given resolution is too |
 |          |                    |        |                              | small for the range, a TB_WARNING will be printed once. |
-|          |                    |        |                              | Default value is the simulator time resolution.         |
+|          |                    |        |                              | Default value is the smallest time unit between the min |
+|          |                    |        |                              | and max parameters.                                     |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | variable | v_seed1            | inout  | positive                     | Randomization seed 1                                    |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -1068,8 +1102,9 @@ Sets v_target to a random value. The procedure uses and updates v_seed1 and v_se
     random(v_seed1, v_seed2, v_slv);
     random(1, 10, v_seed1, v_seed2, v_int);
     random(0.01, 0.03, v_seed1, v_seed2, v_real);
-    random(25 us, 50 us, v_seed1, v_seed2, v_time);     -- Generates random values with the default resolution of the simulator
-    random(25 us, 50 us, us, v_seed1, v_seed2, v_time); -- Generates random values with a resolution of 1 us
+    random(25 us, 50 us, v_seed1, v_seed2, v_time);         -- Generates random values with a resolution of 1 us
+    random(25 us, 50 us, ns, v_seed1, v_seed2, v_time);     -- Generates random values with a resolution of 1 ns
+    random(25 us, 50 us, 100 ns, v_seed1, v_seed2, v_time); -- Generates random values with a resolution of 100 ns
 
 
 randomize()
@@ -1175,11 +1210,14 @@ Returns the character for the ASCII value. ::
 +==========+====================+========+==============================+=========================================================+
 | constant | ascii_pos          | in     | integer                      | ASCII number input                                      |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | ascii_allow        | in     | :ref:`t_ascii_allow`         | | Decide what to do with invisible control characters.  |
-|          |                    |        |                              | | If ALLOW_ALL: return the character for any ascii_pos. |
-|          |                    |        |                              | | If ALLOW_PRINTABLE_ONLY: return the character only if |
-|          |                    |        |                              |   it is printable.                                      |
-|          |                    |        |                              | | Default value is ALLOW_ALL.                           |
+| constant | ascii_allow        | in     | :ref:`t_ascii_allow`         | Decide what to do with invisible control characters.    |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | If ALLOW_ALL: return the character for any ascii_pos.   |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | If ALLOW_PRINTABLE_ONLY: return the character only if   |
+|          |                    |        |                              | it is printable.                                        |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | Default value is ALLOW_ALL.                             |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 
 .. code-block::
@@ -1633,11 +1671,14 @@ falling edge. ::
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | pulse_duration     | in     | time                         | Duration of the pulse in time                           |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | blocking_mode      | in     | :ref:`t_blocking_mode`       | | When BLOCKING, the procedure blocks the caller until  |
-|          |                    |        |                              |   the pulse is done.                                    |
-|          |                    |        |                              | | When NON_BLOCKING, the procedure starts the pulse and |
-|          |                    |        |                              |   schedules the end of the pulse so that the caller can |
-|          |                    |        |                              |   continue immediately.                                 |
+| constant | blocking_mode      | in     | :ref:`t_blocking_mode`       | When BLOCKING, the procedure blocks the caller until    |
+|          |                    |        |                              | the pulse is done.                                      |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | When NON_BLOCKING, the procedure starts the pulse and   |
+|          |                    |        |                              | schedules the end of the pulse so that the caller can   |
+|          |                    |        |                              | continue immediately.                                   |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | Default value is BLOCKING.                              |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | msg                | in     | string                       | A custom message to be appended in the log/alert        |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -1656,7 +1697,6 @@ falling edge. ::
     -- Examples:
     gen_pulse(sl_1, 50 ns, BLOCKING, "Pulsing for 50 ns");
     gen_pulse(sl_1, '1', 50 ns, BLOCKING, "Pulsing for 50 ns");
-    gen_pulse(slv8, 50 ns, "Pulsing SLV for 50 ns", ALLOW_PULSE_CONTINUATION);
     gen_pulse(slv8, x"AB", clk100M, 2, "Pulsing SLV for 2 clock periods");
 
 
@@ -1822,13 +1862,17 @@ Normalize 'value' to the width given by 'target'.
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | target             | in     | *see overloads*              | Parameter used to normalize the value                   |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | mode               | in     | :ref:`t_normalization_mode`  | | Used for sanity checks, it can be one of:             |
-|          |                    |        |                              | | ALLOW_WIDER : Allow only value'length >= target'length|
-|          |                    |        |                              | | ALLOW_NARROWER : Allow only value'length <= target'le\|
-|          |                    |        |                              |   gth                                                   |
-|          |                    |        |                              | | ALLOW_WIDER_NARROWER : Allow both of the above        |
-|          |                    |        |                              | | ALLOW_EXACT_ONLY: Allow only value'length = target'le\|
-|          |                    |        |                              |   gth                                                   |
+| constant | mode               | in     | :ref:`t_normalization_mode`  | Used for sanity checks, it can be one of:               |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | ALLOW_WIDER : Allow only value'length >= target'length  |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | ALLOW_NARROWER : Allow only value'length <= target'le\  |
+|          |                    |        |                              | gth                                                     |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | ALLOW_WIDER_NARROWER : Allow both of the above          |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | ALLOW_EXACT_ONLY: Allow only value'length = target'le\  |
+|          |                    |        |                              | gth                                                     |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | value_name         | in     | string                       | Name of the value for logging purposes                  |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -1941,10 +1985,11 @@ Synchronizes the start of a BFM procedure depending on the clock and bfm_sync. :
 +==========+====================+========+==============================+=========================================================+
 | signal   | clk                | in     | std_logic                    | Clock signal                                            |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | bfm_sync           | in     | :ref:`t_bfm_sync`            | | SYNC_ON_CLOCK_ONLY: waits until the falling edge of   |
-|          |                    |        |                              |   the clk signal.                                       |
-|          |                    |        |                              | | SYNC_WITH_SETUP_AND_HOLD: waits until the setup time  |
-|          |                    |        |                              |   before the clock's rising_edge                        |
+| constant | bfm_sync           | in     | :ref:`t_bfm_sync`            | SYNC_ON_CLOCK_ONLY: waits until the falling edge of     |
+|          |                    |        |                              | the clk signal.                                         |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | SYNC_WITH_SETUP_AND_HOLD: waits until the setup time    |
+|          |                    |        |                              | before the clock's rising_edge                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | setup_time         | in     | time                         | Setup time before the rising edge                       |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -1974,11 +2019,12 @@ consecutive to be able to calculate the correct clock period. ::
 +==========+====================+========+==============================+=========================================================+
 | signal   | clk                | in     | std_logic                    | Clock signal                                            |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
-| constant | bfm_sync           | in     | :ref:`t_bfm_sync`            | | SYNC_ON_CLOCK_ONLY: waits until one quarter of the    |
-|          |                    |        |                              |   clock period (measured with the falling and rising    |
-|          |                    |        |                              |   edges) after the clock's rising_edge.                 |
-|          |                    |        |                              | | SYNC_WITH_SETUP_AND_HOLD: waits until the hold time   |
-|          |                    |        |                              |   after the clock's rising_edge.                        |
+| constant | bfm_sync           | in     | :ref:`t_bfm_sync`            | SYNC_ON_CLOCK_ONLY: waits until one quarter of the      |
+|          |                    |        |                              | clock period (measured with the falling and rising      |
+|          |                    |        |                              | edges) after the clock's rising_edge.                   |
+|          |                    |        |                              |                                                         |
+|          |                    |        |                              | SYNC_WITH_SETUP_AND_HOLD: waits until the hold time     |
+|          |                    |        |                              | after the clock's rising_edge.                          |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
 | constant | hold_time          | in     | time                         | Hold time after the rising edge                         |
 +----------+--------------------+--------+------------------------------+---------------------------------------------------------+
@@ -2549,6 +2595,7 @@ procedure clear_hierarchy(
 constant VOID : t_void
 );
 
+.. _adaptations_pkg:
 
 **********************************************************************************************************************************
 Adaptations package

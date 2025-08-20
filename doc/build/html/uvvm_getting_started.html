@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="./">
 <head>
@@ -5,19 +7,15 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Getting Started &mdash; UVVM  documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=5929fcd5"></script>
-        <script src="_static/doctools.js?v=888ff710"></script>
-        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -62,6 +60,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="utility_library.html">Utility Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="uvvm_assertions.html">UVVM Assertions (BETA)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rand_pkg_overview.html">Enhanced Randomization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="func_cov_pkg_overview.html">Functional Coverage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimized_rand.html">Optimized Randomization</a></li>
@@ -144,7 +143,8 @@ receive the updates is by cloning UVVM with git.</p>
 </li>
 <li><p>After cloning or unzipping UVVM you have all that is needed to start using UVVM and all of its features with your testbench.</p></li>
 </ol>
-<a class="reference internal image-reference" href="_images/clone_download_instructions.png"><img alt="UVVM on GitHub" class="align-center" src="_images/clone_download_instructions.png" style="width: 600pt;" /></a>
+<a class="reference internal image-reference" href="_images/clone_download_instructions.png"><img alt="UVVM on GitHub" class="align-center" src="_images/clone_download_instructions.png" style="width: 600pt;" />
+</a>
 <section id="updating-uvvm">
 <h3>Updating UVVM<a class="headerlink" href="#updating-uvvm" title="Link to this heading"></a></h3>
 <p>The method for updating UVVM depends on the chosen installation method:</p>
@@ -168,7 +168,8 @@ overwrite any local changes to UVVM, e.g. local changes in the adaptations_pkg.v
 </pre></div>
 </div>
 <p>The context files will ensure that everything necessary are made available from within the testbench, e.g.</p>
-<a class="reference internal image-reference" href="_images/testbench_with_sbi_vvc.png"><img alt="Testbench example" src="_images/testbench_with_sbi_vvc.png" style="width: 400pt;" /></a>
+<a class="reference internal image-reference" href="_images/testbench_with_sbi_vvc.png"><img alt="Testbench example" src="_images/testbench_with_sbi_vvc.png" style="width: 400pt;" />
+</a>
 </section>
 <section id="compilation">
 <h2>Compilation<a class="headerlink" href="#compilation" title="Link to this heading"></a></h2>
@@ -193,16 +194,17 @@ is the module/VIP installation path and the second is the target path of the com
 <p>and the vsim command / Modelsim GUI is run from the <code class="docutils literal notranslate"><span class="pre">/my_project</span></code> folder with the <code class="docutils literal notranslate"><span class="pre">/sim</span></code> folder as compilation target:</p>
 <ul>
 <li><p>Command line example for UVVM Utility Library compilation:</p>
-<p><code class="docutils literal notranslate"><span class="pre">$</span> <span class="pre">vsim</span> <span class="pre">-c</span> <span class="pre">-do</span> <span class="pre">&quot;do</span> <span class="pre">../UVVM/uvvm_util/script/compile_src.do</span> <span class="pre">../UVVM</span> <span class="pre">./sim&quot;</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">$</span> <span class="pre">vsim</span> <span class="pre">-c</span> <span class="pre">-do</span> <span class="pre">&quot;do</span> <span class="pre">../UVVM/uvvm_util/script/compile_src.do</span> <span class="pre">../UVVM/uvvm_util</span> <span class="pre">./sim&quot;</span></code></p>
 </li>
 <li><p>Modelsim GUI example:</p></li>
 </ul>
-<a class="reference internal image-reference" href="_images/modelsim_gui_compilation.png"><img alt="Modelsim example" src="_images/modelsim_gui_compilation.png" style="width: 400pt;" /></a>
+<a class="reference internal image-reference" href="_images/modelsim_gui_compilation.png"><img alt="Modelsim example" src="_images/modelsim_gui_compilation.png" style="width: 400pt;" />
+</a>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">../UVVM/uvvm_util/script/compile_src.do</span></code> is the relative path to the <code class="docutils literal notranslate"><span class="pre">compile_src.do</span></code> script for the UVVM Utility Library.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">../UVVM</span> <span class="pre">is</span></code> the relative path to UVVM installation (source path).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">../UVVM/uvvm_util</span></code> is the relative path to UVVM installation (source path), for <code class="docutils literal notranslate"><span class="pre">../UVVM/script/compile_all.do</span></code>, use <code class="docutils literal notranslate"><span class="pre">../UVVM/script</span></code> as source path.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">./sim</span></code> is the relative path to the compilation target (target path).</p></li>
 </ul>
 </div>
@@ -242,7 +244,7 @@ and to visit the UVVM news site at <a class="reference external" href="https://u
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, UVVM.</p>
+    <p>&#169; Copyright 2025 by UVVM steering group. All rights reserved.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

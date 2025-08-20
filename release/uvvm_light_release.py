@@ -53,17 +53,14 @@ def execute_and_print(cmd, allow_fail=False):
 
 def cleanup():
     '''
-    Delete cloned repository and simualtion files.
+    Delete cloned repository and simulation files.
     '''
     print(" - removing simulation files")
     execute_and_print(["rm", "modelsim.ini"])
     execute_and_print(["rm", "transcript"])
     execute_and_print(["rm", "*.txt"])
     execute_and_print(["rm", "-r", "uvvm_util"])
-    # execute_and_print(["rm", "../sim/*.txt"])
-    # execute_and_print(["rm", "../sim/modelsim.ini"])
-    # execute_and_print(["rm", "../sim/transcript"])
-    # execute_and_print(["rm", "-r", "../sim/uvvm_util"])
+    execute_and_print(["rm", "-r", "../sim/uvvm_util"])
 
 
 def copy_files(files_to_copy, current_dir):
@@ -152,7 +149,7 @@ def test_compilation(current_dir):
         print(" - aborting")
         sys.exit(1)
 
-    ok = input(" - Simuations ok [Y/N] ?")
+    ok = input(" - Simulations ok [Y/N] ?")
     if ok.lower() != 'y':
         print(" - aborting")
         sys.exit(1)
@@ -163,9 +160,9 @@ def publish_github(commit_msg : str = None):
     Preparing for publishing of changes to UVVM_Light:
     ----------------------------------------------------
     1. Setting up git user
-    2. Adding all changes and commiting
-    3. Pushin to GitHub UVVM_Light master branch
-    4. Returning to gitlab master branch for clean-up
+    2. Adding all changes and committing
+    3. Pushing to GitHub UVVM_Light master branch
+    4. Returning to GitHub master branch for clean-up
     \n
     """)
 
@@ -189,7 +186,7 @@ def publish_github(commit_msg : str = None):
     print("Deleting cloned repository uvvm")
     os.system("rm -rf uvvm")
 
-    print("Adding files and commiting")
+    print("Adding files and committing")
     execute_and_print(["git", "add", "../src_bfm/."])
     execute_and_print(["git", "add", "../src_util/."])
     execute_and_print(["git", "add", "../doc/."])
@@ -204,7 +201,7 @@ def publish_github(commit_msg : str = None):
     #execute_and_print(["git", "branch", "-M", "main"])
     #execute_and_print(["git", "checkout", "main"])
 
-    print("On UVVM Light master branch: pushing to GitHub UVVM_Light repositoty, master branch")
+    print("On UVVM Light master branch: pushing to GitHub UVVM_Light repository, master branch")
     execute_and_print(["git", "push", "uvvm_light_remote"])
     execute_and_print(["git", "push", "uvvm_light_backup_remote"])
 
@@ -213,11 +210,11 @@ def main():
     current_dir = os.getcwd()
 
     print("\nNote! This program will clone UVVM repository and update all src files on UVVM_Light repository.")
-    print("If a mismatch in file numbers occure, the script will end.")
+    print("If a mismatch in file numbers occurs, the script will end.")
     print("After copy, the script will compile all BFM src files and run the demo TB.")
     print("After compile and simulation the script will remove any generated files and push to GitHub.\n%s" % (80*'='))
 
-    print('\nFetching UVVM reposity and checking out master branch.')
+    print('\nFetching UVVM repository and checking out master branch.')
     prepare_internal_repo(current_dir)
 
     print("%s\nCreating list of all util vhd files available:" % (80*'='))
@@ -233,7 +230,7 @@ def main():
     cleanup()
 
     print("\nPublishing release changes to GitHub")
-    publish_github("Updated to UVVM Light version v2 2024.08.16 - Please see CHANGES.TXT for details.")
+    publish_github("Updated to UVVM Light version v2 2025.08.18 - Please see CHANGES.TXT for details.")
 
     print("==========================================================================")
     print(" UVVM_Light RELEASE DONE\n")
