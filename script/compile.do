@@ -4,7 +4,7 @@
 # Compiled to library uvvm_util
 #
 # Default output directory is /sim and can be changed by passing an existing
-# direcotry as argument to this script.
+# directory as argument to this script.
 #
 #====================================================================================
 
@@ -42,6 +42,8 @@ if {[catch {eval "vsim -version"} message] == 0} {
   quietly set simulator_version [eval "vsim -version"]
 
   if {[regexp -nocase {modelsim} $simulator_version]} {
+    quietly set simulator "modelsim"
+  } elseif {[regexp -nocase {questasim} $simulator_version]} {
     quietly set simulator "modelsim"
   } elseif {[regexp -nocase {aldec} $simulator_version]} {
     quietly set simulator "rivierapro"
@@ -160,14 +162,11 @@ eval vcom $compdirectives $source_path/$util_path/rand_pkg.vhd
 echo "eval vcom $compdirectives $source_path/$util_path/dummy_func_cov_extension_pkg.vhd"
 eval vcom $compdirectives $source_path/$util_path/dummy_func_cov_extension_pkg.vhd
 
-echo "eval vcom $compdirectives $source_path/$util_path/dummy_func_cov_ucdb_pkg.vhd"
-eval vcom $compdirectives $source_path/$util_path/dummy_func_cov_ucdb_pkg.vhd
+echo "eval vcom $compdirectives $source_path/$util_path/association_list_pkg.vhd"
+eval vcom $compdirectives $source_path/$util_path/association_list_pkg.vhd
 
 echo "eval vcom $compdirectives $source_path/$util_path/func_cov_pkg.vhd"
 eval vcom $compdirectives $source_path/$util_path/func_cov_pkg.vhd
-
-echo "eval vcom $compdirectives $source_path/$util_path/uvvm_assertions_pkg.vhd"
-eval vcom $compdirectives $source_path/$util_path/uvvm_assertions_pkg.vhd
 
 echo "eval vcom $compdirectives $source_path/$util_path/uvvm_util_context.vhd"
 eval vcom $compdirectives $source_path/$util_path/uvvm_util_context.vhd

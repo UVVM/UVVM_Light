@@ -33,22 +33,10 @@ echo "Running: $TARGT_PATH ghdl -a --std=08 -frelaxed-rules -Wno-hide -Wno-share
 ghdl -a --std=08 -frelaxed-rules -Wno-hide -Wno-shared --work=$COMPILE_LIB $SRC_PATH/$part_path/$file_name
 }
 
-# Compile UVVM Util
-#util_file_list='types_pkg.vhd
-#        adaptations_pkg.vhd
-#        string_methods_pkg.vhd 
-#        protected_types_pkg.vhd
-#        global_signals_and_shared_variables_pkg.vhd
-#        hierarchy_linked_list_pkg.vhd
-#        alert_hierarchy_pkg.vhd
-#        license_pkg.vhd
-#        methods_pkg.vhd
-#        bfm_common_pkg.vhd
-#        generic_queue_pkg.vhd
-#        rand_pkg.vhd
-#        func_cov_pkg.vhd
-#        uvvm_util_context.vhd'
 
+# Compile UVVM Util
+echo ""
+echo "Compiling UVVM Utility Library..."
 util_file_list='
   types_pkg.vhd
   adaptations_pkg.vhd
@@ -64,17 +52,14 @@ util_file_list='
   data_queue_pkg.vhd
   data_fifo_pkg.vhd
   data_stack_pkg.vhd
+  dummy_rand_extension_pkg.vhd
   rand_pkg.vhd
+  dummy_func_cov_extension_pkg.vhd
+  association_list_pkg.vhd
   func_cov_pkg.vhd
   uvvm_util_context.vhd'
 
-
-
 COMPILE_LIB="uvvm_util"
-
-echo ""
-echo "Compiling UVVM Utility Library..."
-
 part_path="src_util"
 for file_name in $util_file_list; do
     compile_file
@@ -82,12 +67,12 @@ done
 
 
 # Compile UVVM BFMs
-
 echo ""
 echo "Compiling UVVM BFMs..."
 bfm_file_list='avalon_mm_bfm_pkg.vhd
 	      avalon_st_bfm_pkg.vhd
-	      axilite_bfm_pkg.vhd
+	      axi_bfm_pkg.vhd
+          axilite_bfm_pkg.vhd
 	      axistream_bfm_pkg.vhd
 	      gmii_bfm_pkg.vhd
 	      gpio_bfm_pkg.vhd
@@ -95,7 +80,8 @@ bfm_file_list='avalon_mm_bfm_pkg.vhd
 	      rgmii_bfm_pkg.vhd
 	      sbi_bfm_pkg.vhd
 	      spi_bfm_pkg.vhd
-	      uart_bfm_pkg.vhd'
+	      uart_bfm_pkg.vhd
+          wishbone_bfm_pkg.vhd'
 
 part_path="src_bfm"
 for file_name in $bfm_file_list; do

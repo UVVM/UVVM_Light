@@ -4,11 +4,18 @@ UVVM (Universal VHDL Verification Methodology) is a free and Open Source Methodo
 Overview, Readability, Maintainability, Extensibility and Reuse are all vital for FPGA development efficiency and quality.
 UVVM VVC (VHDL Verification Component) Framework was released in 2016 to handle exactly these aspects.
 
-UVVM Light is a low threshold version of UVVM and is intended for developers who want to start using UVVM Utilty library and BFMs (Bus Functional Models).
+UVVM Light is a low threshold version of UVVM and is intended for developers who want to start using UVVM Utility library and BFMs (Bus Functional Models).
 
-UVVM Light consists currently of the following elements:
-- Utility Library
-- BFMs (Bus Functional Models)
+UVVM consists currently of the following elements:
+
+* [Utility Library](https://uvvm.github.io/utility_library.html)
+* BFMs (Bus Functional Models) (See [Available BFMs](https://uvvm.github.io/tool_compatibility.html#uvvm-vvcs-and-bfms))
+
+For information on how to get started, see [Getting Started](https://uvvm.github.io/uvvm_getting_started.html).
+
+For frequently asked questions, see [FAQ](https://uvvm.github.io/faq.html).
+
+The complete UVVM documentation can be found on https://uvvm.github.io.
 
 
 ## Issues and pull requests
@@ -16,7 +23,7 @@ UVVM Light is a subset of UVVM v2, thus any issues and pull requests has to be p
 
 
 ## Compilation
-Compiling UVVM Light is be done by calling the `script/compile.do` script with a relative or absolut path to UVVM Light install directory
+Compiling UVVM Light is be done by calling the `script/compile.do` script with a relative or absolute path to UVVM Light install directory
 ```sh
 $ vsim -c -do "do [uvvm_light directory]/script/compile.do [uvvm_light directory] [target directory]"
 ```

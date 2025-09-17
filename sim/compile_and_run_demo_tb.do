@@ -6,7 +6,6 @@
 #
 #-------------------------------------------------------
 
-
 #
 # Overload quietly (Modelsim specific command) to let it work in Riviera-Pro
 #
@@ -19,21 +18,13 @@ proc quietly { args } {
   }
 }
 
-
-#
-# End the simulations if there's an error or when run from terminal.
-#
-if {[batch_mode]} {
-  onerror {abort all; exit -f -code 1}
-} else {
-  onerror {abort all}
-}
-
 # Detect simulator
 if {[catch {eval "vsim -version"} message] == 0} {
   quietly set simulator_version [eval "vsim -version"]
 
   if {[regexp -nocase {modelsim} $simulator_version]} {
+    quietly set simulator "modelsim"
+  } elseif {[regexp -nocase {questasim} $simulator_version]} {
     quietly set simulator "modelsim"
   } elseif {[regexp -nocase {aldec} $simulator_version]} {
     quietly set simulator "rivierapro"
@@ -46,6 +37,18 @@ if {[catch {eval "vsim -version"} message] == 0} {
     abort all
 }
 
+#
+# End the simulations if there's an error or when run from terminal.
+#
+if {[batch_mode]} {
+  if { [string equal -nocase $simulator "rivierapro"] } {
+    onerror {quit -code 1 -force}
+   } else {
+    onerror {abort all; exit -f -code 1}
+  }
+} else {
+  onerror {abort all}
+}
 
 #
 # Set compile directives based on previously detected simulator.
@@ -60,6 +63,8 @@ if { [string equal -nocase $simulator "modelsim"] } {
 # Compile UVVM Util library
 #
 do ../script/compile.do
+
+
 
 #-----------------------------------------------------------------------
 # Compile testbench files

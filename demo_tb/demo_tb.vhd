@@ -32,6 +32,7 @@
 
 
   -- Test case entity
+  --HDLRegression:TB
   entity demo_tb is
   end entity;
 
