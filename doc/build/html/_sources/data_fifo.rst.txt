@@ -1,9 +1,9 @@
-.. _uvvm_fifo_collection:
+.. _uvvm_data_fifo:
 
 ##################################################################################################################################
-UVVM FIFO Collection
+UVVM Data FIFO
 ##################################################################################################################################
-The FIFO Collection is a memory buffer that can be used to hold one or more FIFOs. Each FIFO will be allocated a chosen size and 
+The UVVM Data FIFO is a memory buffer that can be used to hold one or more FIFOs. Each FIFO will be allocated a chosen size and 
 ID number. This allows a selectable number of FIFOs to operate individually and be independently accessed.
 
 **********************************************************************************************************************************
@@ -13,15 +13,21 @@ Functional Parameters
 +-------------------------+------------------------------+---------------------------------------------------------+
 | Name                    | Type                         | Description                                             |
 +=========================+==============================+=========================================================+
-| buffer_idx              | natural                      | The index of the FIFO that shall be initialized         |
+| buffer_idx              | natural                      | The index of the FIFO that shall be initialized.        |
+|                         |                              |                                                         |
+|                         |                              | The maximum number of FIFOs is defined by               |
+|                         |                              | C_NUMBER_OF_DATA_BUFFERS in adaptations_pkg.            |
 +-------------------------+------------------------------+---------------------------------------------------------+
-| buffer_size_in_bits     | natural                      | The size of the FIFO                                    |
+| buffer_size_in_bits     | natural                      | The size of the FIFO.                                   |
+|                         |                              |                                                         |
+|                         |                              | The maximum FIFO size is defined by                     |
+|                         |                              | C_TOTAL_NUMBER_OF_BITS_IN_DATA_BUFFER in adaptations_pkg|
 +-------------------------+------------------------------+---------------------------------------------------------+
 | entry_size_in_bits      | natural                      | The size of the returned std_logic_vector               |
 +-------------------------+------------------------------+---------------------------------------------------------+
 | data                    | std_logic_vector             | The data that shall be pushed to the FIFO               |
 +-------------------------+------------------------------+---------------------------------------------------------+
-| void                    | t_void                       | Unused, empty input parameter                           |
+| void                    | :ref:`t_void`                | Unused, empty input parameter                           |
 +-------------------------+------------------------------+---------------------------------------------------------+
 
 **********************************************************************************************************************************

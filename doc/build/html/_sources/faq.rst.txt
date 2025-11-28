@@ -18,6 +18,13 @@ UVVM Questions
    You need to instantiate ``uvvm_vvc_framework.ti_uvvm_engine`` in your testbench, and you should include ``await_uvvm_initialization(VOID)`` 
    as your first statement in your test case sequencer. See "bitvis_uart/tb/uart_vvc_th|tb.vhd" for examples.
 
+..................................................................................................................................
+
+* Why do I get a TB_NOTE alert saying "Sub-program x is outdated and has been replaced by another sub-program."?
+   The specified functionality has been deprecated and therefore will be removed in the next major release of UVVM. It is 
+   recommended to replace all deprecated calls with the suggestions given in the TB_NOTEs. Alternatively, to temporarily remove 
+   all the deprecate alerts, set the constant C_DEPRECATE_SETTING in adaptations_pkg to NO_DEPRECATE.
+
 **********************************************************************************************************************************
 VVC Questions
 **********************************************************************************************************************************
