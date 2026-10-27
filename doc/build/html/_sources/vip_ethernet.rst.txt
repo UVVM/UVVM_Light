@@ -362,28 +362,28 @@ Scoreboard
 This VVC has built in Scoreboard functionality where data can be routed by setting the TO_SB parameter in supported method calls, 
 i.e. ethernet_receive(). Note that the data is only stored in the scoreboard and not accessible with the fetch_result() method 
 when the TO_SB parameter is applied. The Ethernet scoreboard is accessible from the testbench as a shared variable 
-``ETHERNET_VVC_SB``, located in the vvc_methods_pkg.vhd, e.g. ::
+``ethernet_vvc_sb``, located in the vvc_methods_pkg.vhd, e.g. ::
 
-    ETHERNET_VVC_SB.add_expected(C_ETH_GMII_VVC_IDX, v_expected_frame, "Adding expected");
+    ethernet_vvc_sb.add_expected(C_ETH_GMII_VVC_IDX, v_expected_frame, "Adding expected");
 
 See the :ref:`vip_scoreboard` for a complete list of available commands and additional information. All of the listed Generic
-Scoreboard commands are available for the Ethernet VVC scoreboard using the ``ETHERNET_VVC_SB``.
+Scoreboard commands are available for the Ethernet VVC scoreboard using the ``ethernet_vvc_sb``.
 
 
-Unwanted Activity Detection
+Unwanted Transaction Detection
 ==================================================================================================================================
-Since HVVCs do not contain any physical ports, the unwanted activity detection is found in the physical layer VVC connected to the 
+Since HVVCs do not contain any physical ports, the unwanted transaction detection is found in the physical layer VVC connected to the 
 HVVC, e.g. GMII/RGMII/SBI. Thus, when the data is not expected from the DUT, i.e. Ethernet VVC receive/expect methods are not 
 called, an alert of severity will be generated from the physical layer VVCs.
 
-The unwanted activity detection can be configured from the central testbench sequencer, where the severity of alert can be changed 
+The unwanted transaction detection can be configured from the central testbench sequencer, where the severity of alert can be changed 
 to a different value. To disable this feature in the testbench, e.g. for GMII VVC::
 
-    shared_gmii_vvc_config(RX, C_VVC_INDEX).unwanted_activity_severity := NO_ALERT;
+    shared_gmii_vvc_config(RX, C_VVC_INDEX).unwanted_transaction_checking_enabled := FALSE;
 
-Note that the unwanted activity detection is enabled (unwanted_activity_severity := ERROR) by default for the GMII/RGMII/SBI VVCs.
+Note that the unwanted transaction detection is enabled by default for the GMII/RGMII/SBI VVCs.
 
-More information can be found in :ref:`Essential Mechanisms - Unwanted Activity Detection <vvc_framework_unwanted_activity>`.
+More information can be found in :ref:`Essential Mechanisms - Unwanted Transaction Detection <vvc_framework_unwanted_transaction>`.
 
 
 Support package

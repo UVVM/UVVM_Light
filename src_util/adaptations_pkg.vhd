@@ -34,8 +34,7 @@ package adaptations_pkg is
   constant C_LOG_FILE_NAME                            : string := "UVVM_Log.txt";
   constant C_WARNING_ON_LOG_ALERT_FILE_RUNTIME_RENAME : boolean := false;
 
-  constant C_DEFAULT_LOG_DESTINATION : t_log_destination := CONSOLE_AND_LOG; -- This parameter can also be modified per testbench by
-                                                                             -- updating the shared variable shared_default_log_destination
+  constant C_DEFAULT_LOG_DESTINATION : t_log_destination := CONSOLE_AND_LOG; -- This parameter can also be modified per testbench by updating the shared variable shared_default_log_destination
 
   constant C_SHOW_UVVM_UTILITY_LIBRARY_INFO : boolean := true; -- Set this to false when you no longer need the initial info
 
@@ -57,8 +56,7 @@ package adaptations_pkg is
   constant C_LOG_INFO_WIDTH    : natural := C_LOG_LINE_WIDTH - C_LOG_PREFIX_WIDTH;
 
   constant C_USE_BACKSLASH_N_AS_LF : boolean := true; -- If true interprets '\n' as Line feed
-  constant C_USE_BACKSLASH_R_AS_LF : boolean := true; -- If true, inserts an empty line if '\r' is the first character of the string.
-                                                      -- All others '\r' will be printed as is.
+  constant C_USE_BACKSLASH_R_AS_LF : boolean := true; -- If true, inserts an empty line if '\r' is the first character of the string. All others '\r' will be printed as is.
 
   constant C_SINGLE_LINE_ALERT : boolean := false; -- If true prints alerts on a single line.
   constant C_SINGLE_LINE_LOG   : boolean := false; -- If true prints log messages on a single line.
@@ -235,6 +233,10 @@ package adaptations_pkg is
   --------------------------------------------------------------------------------------------------------------------------------
   constant C_USE_STD_STOP_ON_ALERT_STOP_LIMIT : boolean := true;  -- True: break using std.env.stop(1). False: break using failure.
   constant C_ENABLE_CHECK_COUNTER             : boolean := false; -- Enable/disable check_counter to count number of check calls.
+  -- True: every regarded alert (WARNING level and above, except MANUAL_CHECK) also issues a VHDL report with the corresponding
+  -- severity, so that the simulator's own test status (e.g. Questa TESTSTATUS) reflects the UVVM alerts.
+  -- Note that some simulators stop on a VHDL severity error/failure by default, independent of the UVVM stop limits.
+  constant C_REPORT_ALERTS_TO_SIMULATOR       : boolean := false;
 
   -- Default values. These can be overwritten in each sequencer by using set_alert_attention or set_alert_stop_limit (see quick ref).
   constant C_DEFAULT_ALERT_ATTENTION : t_alert_attention := (others => REGARD);
@@ -303,8 +305,7 @@ package adaptations_pkg is
   constant C_CSV_DELIMITER                 : character     := ',';        -- Delimiter when reading and writing CSV files.
   constant C_MAX_REQUIREMENT_LINES         : positive      := 1000;       -- Maximum number of requirements in the req_map file used in initialize_req_cov().
   constant C_MAX_TESTCASES_PER_REQ         : positive      := 20;         -- Max number of testcases allowed per requirement.
-  constant C_MISSING_REQ_LABEL_SEVERITY    : t_alert_level := TB_WARNING; -- Alert level used when the tick_off_req_cov() procedure does not find the specified
-                                                                          -- requirement label in the requirement list.
+  constant C_MISSING_REQ_LABEL_SEVERITY    : t_alert_level := TB_WARNING; -- Alert level used when the tick_off_req_cov() procedure does not find the specified requirement label in the requirement list.
   constant C_COMPOUND_REQ_TICKOFF_SEVERITY : t_alert_level := TB_WARNING; -- Alert level used when tickoff is performed on a requirement that has sub requirements.
 
   --------------------------------------------------------------------------------------------------------------------------------
@@ -338,6 +339,7 @@ package adaptations_pkg is
   -- Constants for the maximum sizes to use in the BFM.
   constant C_AVALON_ST_BFM_MAX_BITS_PER_SYMBOL  : positive := 512; -- Recommended maximum in protocol specification (MNL-AVABUSREF)
   constant C_AVALON_ST_BFM_MAX_SYMBOLS_PER_BEAT : positive := 32;  -- Recommended maximum in protocol specification (MNL-AVABUSREF)
+  constant C_AVALON_ST_BFM_MAX_DATA_WORDS       : positive := 1024;
 
   -- AXI-Stream
   -- Constants for the maximum sizes to use in the BFM.
@@ -371,10 +373,10 @@ package adaptations_pkg is
   constant C_MAX_NUM_SEQUENCERS                    : natural       := 10; -- DEPRECATED: will be removed in v3
   constant C_MAX_TB_VVC_NUM                        : natural       := 20; -- Max number of VVCs in testbench (including all channels)
 
-  -- Default severity for the unwanted activity detection.
-  -- All VVCs have the unwanted activity detection enabled (ERROR) by default, except:
-  -- For GPIO VVC, the unwanted activity detection is disabled (NO_ALERT) by default. See constant C_GPIO_VVC_CONFIG_DEFAULT in the GPIO VVC methods package.
-  constant C_UNWANTED_ACTIVITY_SEVERITY : t_alert_level := ERROR;
+  -- Default for enabling the unwanted transaction detection. The alert severity for each monitored signal is set in each VVC methods package.
+  -- All VVCs have the unwanted transaction detection enabled (true) by default, except:
+  -- For GPIO VVC, the unwanted transaction detection is disabled (false) by default. See constant C_GPIO_VVC_CONFIG_DEFAULT in the GPIO VVC methods package.
+  constant C_UNWANTED_TRANSACTION_CHECKING_DEFAULT : boolean := true;
 
   -- Maximum allowed length of VVC names
   constant C_MAX_VVC_NAME_LENGTH : positive := 20;
@@ -421,13 +423,21 @@ package adaptations_pkg is
     ALL_CHANNELS,                       -- When command shall be received by all channels
     -- UVVM predefined channels.
     RX, TX
-    -- User can add more channels if needed below.
+  -- User can add more channels if needed below.
   );
 
   --------------------------------------------------------------------------------------------------------------------------------
   -- VVCs
   --------------------------------------------------------------------------------------------------------------------------------
   constant C_COMMON_VVC_CMD_STRING_MAX_LENGTH : natural := 300;
+
+  -- APB
+  -- Constants for the maximum sizes to use in the VVC.
+  constant C_APB_VVC_CMD_DATA_MAX_LENGTH        : natural := 32;
+  constant C_APB_VVC_CMD_ADDR_MAX_LENGTH        : natural := 32;
+  constant C_APB_VVC_CMD_BYTE_ENABLE_MAX_LENGTH : natural := 4;
+  constant C_APB_VVC_CMD_STRING_MAX_LENGTH      : natural := C_COMMON_VVC_CMD_STRING_MAX_LENGTH;
+  constant C_APB_VVC_MAX_INSTANCE_NUM           : natural := C_MAX_VVC_INSTANCE_NUM;
 
   -- Avalon-MM
   -- Constants for the maximum sizes to use in the VVC.
@@ -441,7 +451,7 @@ package adaptations_pkg is
   -- Constants for the maximum sizes to use in the VVC.
   constant C_AVALON_ST_VVC_CMD_CHAN_MAX_LENGTH   : natural := 8;
   constant C_AVALON_ST_VVC_CMD_WORD_MAX_LENGTH   : natural := 512;
-  constant C_AVALON_ST_VVC_CMD_DATA_MAX_WORDS    : natural := 1024;
+  constant C_AVALON_ST_VVC_CMD_DATA_MAX_WORDS    : natural := C_AVALON_ST_BFM_MAX_DATA_WORDS; -- Must be equal to BFM equivalent
   constant C_AVALON_ST_VVC_CMD_STRING_MAX_LENGTH : natural := C_COMMON_VVC_CMD_STRING_MAX_LENGTH;
   constant C_AVALON_ST_VVC_MAX_INSTANCE_NUM      : natural := C_MAX_VVC_INSTANCE_NUM;
 

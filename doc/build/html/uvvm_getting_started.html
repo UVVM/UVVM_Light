@@ -8,14 +8,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Getting Started &mdash; UVVM  documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/custom.css?v=8abdc7a9" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -68,6 +68,7 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#questa-one-extended-features">Questa One Extended Features</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#further-reading">Further Reading</a></li>
 </ul>
 </li>
@@ -78,6 +79,7 @@
 <li class="toctree-l1"><a class="reference internal" href="optimized_rand.html">Optimized Randomization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="uvvm_assertions.html">UVVM Assertions (BETA)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vvc_framework.html">VVC Framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_apb.html">External VIP APB</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_mm.html">Bitvis VIP Avalon-MM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_st.html">Bitvis VIP Avalon-ST</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_axi.html">Bitvis VIP AXI4</a></li>
@@ -98,6 +100,7 @@
 <li class="toctree-l1"><a class="reference internal" href="vip_uart.html">Bitvis VIP UART</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tool_compatibility.html">Tool Compatibility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fusesoc.html">FuseSoC support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
 </ul>
 
@@ -320,7 +323,7 @@ default location is <code class="docutils literal notranslate"><span class="pre"
 <p>The <code class="docutils literal notranslate"><span class="pre">compile_all.do</span></code> script located in the main script directory can be used to precompile the UVVM libraries and VIPs. Choose
 (or create) an appropriate directory for user precompiled libraries, and create a <code class="docutils literal notranslate"><span class="pre">uvvm</span></code> sub-directory under it. This sub-directory
 is the 2nd argument to the script. For example, on Windows/MSYS2, enter the following command in a Windows Command Prompt:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">vsim -c -do &quot;do C:/work/UVVM/script/compile_all.do C:/work/UVVM/script C:/work/.simlib/uvvm; exit&quot;</span>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">vsim -c -do "do C:/work/UVVM/script/compile_all.do C:/work/UVVM/script C:/work/.simlib/uvvm; exit"</span>
 </pre></div>
 </div>
 <ul class="simple">
@@ -332,6 +335,50 @@ is the 2nd argument to the script. For example, on Windows/MSYS2, enter the foll
 <strong>home</strong> directory. You can change this by setting the <code class="docutils literal notranslate"><span class="pre">SIM_LIB_PATH</span></code> variable in your Makefile.</p>
 </section>
 </section>
+</section>
+<section id="questa-one-extended-features">
+<span id="questa-enabling"></span><h2>Questa One Extended Features<a class="headerlink" href="#questa-one-extended-features" title="Link to this heading"></a></h2>
+<p>Questa One v.2026.1 and newer supports some extended features for UVVM Functional Coverage and Enhanced Randomization. <em>Note that these
+features are exclusive to Questa One, and will not work with other simulators.</em></p>
+<p>When running Questa One, follow these steps to enable the extended features:</p>
+<ol class="arabic simple">
+<li><p>In the <code class="docutils literal notranslate"><span class="pre">uvvm_util/src</span></code> directory, replace the files named <code class="docutils literal notranslate"><span class="pre">dummy_&lt;package_name&gt;</span></code> with the corresponding packages named
+<code class="docutils literal notranslate"><span class="pre">questa_&lt;package_name&gt;</span></code> found in the <code class="docutils literal notranslate"><span class="pre">misc/vendor_extensions/questa</span></code> directory.</p></li>
+<li><p>If using the UVVM compile scripts found in the <code class="docutils literal notranslate"><span class="pre">uvvm_util/script</span></code> directory, open the file <code class="docutils literal notranslate"><span class="pre">uvvm_util/script/compile_order.txt</span></code>
+and change the names of the files replaced in step 1 from <code class="docutils literal notranslate"><span class="pre">dummy_&lt;package_name&gt;</span></code> to <code class="docutils literal notranslate"><span class="pre">questa_&lt;package_name&gt;</span></code>.</p></li>
+<li><p>When running simulations, use the <code class="docutils literal notranslate"><span class="pre">qopt</span></code> and <code class="docutils literal notranslate"><span class="pre">qsim</span></code> commands for optimalization and simulation. The <code class="docutils literal notranslate"><span class="pre">qopt</span></code> command must be run
+with argument <code class="docutils literal notranslate"><span class="pre">qoneRandLib.RandLib</span></code> for the Enhanced Randomization extensions to work and with the <code class="docutils literal notranslate"><span class="pre">-access=r+/.</span></code> switch for the
+Functional Coverage auto-sampling feature to work.</p></li>
+</ol>
+<p>Example of <code class="docutils literal notranslate"><span class="pre">qopt</span></code>/<code class="docutils literal notranslate"><span class="pre">qsim</span></code> commands:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">vcom -2008 &lt;vhdl files&gt;</span>
+<span class="go">qopt -o opt &lt;my_tb_entity&gt; qoneRandLib.RandLib  -noincr -access=r+/.</span>
+<span class="go">qsim -c opt -do "run -all"</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head" colspan="2"><p>qopt argument</p></th>
+<th class="head"><p>When is it required?</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td colspan="2"><p>qoneRandLib.Randlib</p></td>
+<td><p>Required for Questa One Enhanced Randomization extensions to work.</p></td>
+</tr>
+<tr class="row-odd"><td colspan="2"><p>-access=r+/.</p></td>
+<td><p>Required for Questa One Functional Coverage auto-sampling feature to work.</p></td>
+</tr>
+<tr class="row-even"><td colspan="2"><p>-noincr</p></td>
+<td><p>Optional. Forces full re-run of design optimization, which may be needed
+if the design was previously optimized without the <code class="docutils literal notranslate"><span class="pre">access=r+/.</span></code> switch</p></td>
+</tr>
+</tbody>
+</table>
+<p>For more information about extended features for Functional Coverage, see <a class="reference internal" href="func_cov_pkg_overview.html#questa-func-cov"><span class="std std-ref">Questa One extended Functional Coverage
+functionality</span></a></p>
+<p>For more information about extended features for Enhanced Randomization, see <a class="reference internal" href="rand_pkg_overview.html#questa-rand"><span class="std std-ref">Questa One extended Randomization
+functionality</span></a></p>
 </section>
 <section id="further-reading">
 <h2>Further Reading<a class="headerlink" href="#further-reading" title="Link to this heading"></a></h2>

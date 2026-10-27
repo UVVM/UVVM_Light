@@ -8,14 +8,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Introduction &mdash; UVVM  documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/custom.css?v=8abdc7a9" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -66,6 +66,7 @@
 <li class="toctree-l1"><a class="reference internal" href="optimized_rand.html">Optimized Randomization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="uvvm_assertions.html">UVVM Assertions (BETA)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vvc_framework.html">VVC Framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vip_apb.html">External VIP APB</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_mm.html">Bitvis VIP Avalon-MM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_avalon_st.html">Bitvis VIP Avalon-ST</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_axi.html">Bitvis VIP AXI4</a></li>
@@ -86,6 +87,7 @@
 <li class="toctree-l1"><a class="reference internal" href="vip_uart.html">Bitvis VIP UART</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vip_wishbone.html">Bitvis VIP Wishbone</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tool_compatibility.html">Tool Compatibility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fusesoc.html">FuseSoC support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
 </ul>
 
@@ -193,23 +195,80 @@ the VVCs in the local sequencers for better control and encapsulation (see <a cl
 <span id="uvvm-vvcs-and-bfms"></span><h2>Available VVCs and BFMs<a class="headerlink" href="#available-vvcs-and-bfms" title="Link to this heading"></a></h2>
 <p>These VVCs and BFMs could be used inside a typical UVVM testbench, but they could also be used stand-alone - e.g. as a BFM or VVC
 to handle just the AXI4-Lite interface with everything else being your proprietary testbench and methodology.</p>
-<ul class="simple">
-<li><p>Avalon MM</p></li>
-<li><p>Avalon ST - master and slave</p></li>
-<li><p>AXI4</p></li>
-<li><p>AXI4-Lite</p></li>
-<li><p>AXI-Stream - master and slave</p></li>
-<li><p>Ethernet</p></li>
-<li><p>GMII - transmit and receive</p></li>
-<li><p>GPIO</p></li>
-<li><p>I2C - master and slave</p></li>
-<li><p>RGMII - transmit and receive</p></li>
-<li><p>SBI (Simple Bus Interface - A single cycle simple parallel bus interface)</p></li>
-<li><p>SPI - master and slave</p></li>
-<li><p>UART</p></li>
-<li><p>Wishbone</p></li>
-<li><p>More are coming</p></li>
-</ul>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Interface</p></th>
+<th class="head"><p>Interface Role</p></th>
+<th class="head"><p>Role Selection</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>APB</p></td>
+<td><p>master</p></td>
+<td><p>N/A</p></td>
+</tr>
+<tr class="row-odd"><td><p>Avalon MM</p></td>
+<td><p>master</p></td>
+<td><p>N/A</p></td>
+</tr>
+<tr class="row-even"><td><p>Avalon ST</p></td>
+<td><p>master and slave</p></td>
+<td><p>via VVC generic</p></td>
+</tr>
+<tr class="row-odd"><td><p>AXI4</p></td>
+<td><p>master</p></td>
+<td><p>N/A</p></td>
+</tr>
+<tr class="row-even"><td><p>AXI4-Lite</p></td>
+<td><p>master</p></td>
+<td><p>N/A</p></td>
+</tr>
+<tr class="row-odd"><td><p>AXI4-Stream</p></td>
+<td><p>master and slave</p></td>
+<td><p>via VVC generic</p></td>
+</tr>
+<tr class="row-even"><td><p>Ethernet</p></td>
+<td><p>transmit and receive</p></td>
+<td><p>via separate interfaces</p></td>
+</tr>
+<tr class="row-odd"><td><p>GMII</p></td>
+<td><p>transmit and receive</p></td>
+<td><p>via separate interfaces</p></td>
+</tr>
+<tr class="row-even"><td><p>GPIO</p></td>
+<td><p>N/A</p></td>
+<td><p>N/A</p></td>
+</tr>
+<tr class="row-odd"><td><p>I2C</p></td>
+<td><p>master and slave</p></td>
+<td><p>via VVC generic and separate procedures</p></td>
+</tr>
+<tr class="row-even"><td><p>RGMII</p></td>
+<td><p>transmit and receive</p></td>
+<td><p>via separate interfaces</p></td>
+</tr>
+<tr class="row-odd"><td><p>SBI</p></td>
+<td><p>master</p></td>
+<td><p>N/A</p></td>
+</tr>
+<tr class="row-even"><td><p>SPI</p></td>
+<td><p>master and slave</p></td>
+<td><p>via VVC generic and separate procedures</p></td>
+</tr>
+<tr class="row-odd"><td><p>UART</p></td>
+<td><p>transmit and receive</p></td>
+<td><p>via separate interfaces</p></td>
+</tr>
+<tr class="row-even"><td><p>Wishbone</p></td>
+<td><p>master</p></td>
+<td><p>N/A</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The SBI (Simple Bus Interface) is a single cycle simple parallel bus interface.</p>
+</div>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
 <p>The VIPs complies with respective protocols and thus allows a normal access towards the interface. The VIPs are not protocol

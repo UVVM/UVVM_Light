@@ -951,9 +951,13 @@ Configuration Record
 | force_single_pending_transac/| boolean                      | false           | Waits until the previous transaction is         |
 | tion                         |                              |                 | completed before starting the next one          |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
-| unwanted_activity_severity   | :ref:`t_alert_level`         | C_UNWANTED_ACTI\| Severity of alert to be issued if unwanted      |
-|                              |                              | VITY_SEVERITY   | activity on the DUT outputs is detected. It is  |
-|                              |                              |                 | enabled with ERROR severity by default.         |
+| unwanted_transaction_checkin\| boolean                      | C_UNWANTED_TRAN\| Enable unwanted transaction checking            |
+| g_enabled                    |                              | SACTION_CHECKIN\|                                                 |
+|                              |                              | G_DEFAULT       |                                                 |
++------------------------------+------------------------------+-----------------+-------------------------------------------------+
+| unwanted_transaction_severity| :ref:`t_axi_unwanted_transac\| C_AXI_UNWANTED\ | Severity of alert to be issued if unwanted      |
+|                              | tion<t_axi_unwanted_transact\| _TRANSACTION    | transactions are detected on the DUT outputs.   |
+|                              | ion>`                        |                 |                                                 |
 +------------------------------+------------------------------+-----------------+-------------------------------------------------+
 
 .. note::
@@ -1186,7 +1190,7 @@ scoreboard where it will be checked against the expected value (provided by the 
       arburst          => INCR,
       arlock           => NORMAL,
       arcache          => "0000",
-      arprot           => UNPRIVILEGED_UNSECURE_DATA,
+      arprot           => UNPRIVILEGED_NONSECURE_DATA,
       arqos            => "0000",
       arregion         => "0000",
       aruser           => x"01",
@@ -1307,7 +1311,7 @@ severity 'alert_level' will be issued. The read data will not be stored by this 
       arburst          => INCR,
       arlock           => NORMAL,
       arcache          => "0000",
-      arprot           => UNPRIVILEGED_UNSECURE_DATA,
+      arprot           => UNPRIVILEGED_NONSECURE_DATA,
       arqos            => "0000",
       arregion         => "0000",
       aruser           => x"01",
@@ -1489,37 +1493,69 @@ Scoreboard
 ==================================================================================================================================
 This VVC has built in Scoreboard functionality where data can be routed by setting the TO_SB parameter in supported method calls, 
 i.e. axi_read(). Note that the data is only stored in the scoreboard and not accessible with the fetch_result() method when the 
-TO_SB parameter is applied. The AXI4 scoreboard is accessible from the testbench as a shared variable ``AXI_VVC_SB``, located in 
+TO_SB parameter is applied. The AXI4 scoreboard is accessible from the testbench as a shared variable ``axi_vvc_sb``, located in 
 the vvc_methods_pkg.vhd, e.g. ::
 
-    AXI_VVC_SB.add_expected(C_AXI_VVC_IDX, v_expected, "Adding expected");
+    axi_vvc_sb.add_expected(C_AXI_VVC_IDX, v_expected, "Adding expected");
 
 The AXI4 scoreboard is per default the maximum width of rid, rdata, rresp and ruser. When sending expected result to the scoreboard, 
 where the result width is smaller than the default scoreboard width, we recommend zero-padding the data.
 
 See the :ref:`vip_scoreboard` for a complete list of available commands and additional information. All of the listed Generic
-Scoreboard commands are available for the AXI4 VVC scoreboard using the ``AXI_VVC_SB``.
+Scoreboard commands are available for the AXI4 VVC scoreboard using the ``axi_vvc_sb``.
 
 
-Unwanted Activity Detection
+.. _t_axi_unwanted_transaction:
+
+Unwanted Transaction Detection
 ==================================================================================================================================
-.. include:: rst_snippets/vip_unwanted_activity.rst
+.. include:: rst_snippets/vip_unwanted_transaction.rst
+
+**t_axi_unwanted_transaction**
+
++-------------------------+------------------------------+-----------------+
+| Record element          | Type                         | Default         |
++=========================+==============================+=================+
+| bvalid                  | :ref:`t_alert_level`         | ERROR           |
++-------------------------+------------------------------+-----------------+
+| bid                     | :ref:`t_alert_level`         | NO_ALERT        |
++-------------------------+------------------------------+-----------------+
+| bresp                   | :ref:`t_alert_level`         | NO_ALERT        |
++-------------------------+------------------------------+-----------------+
+| buser                   | :ref:`t_alert_level`         | NO_ALERT        |
++-------------------------+------------------------------+-----------------+
+| rvalid                  | :ref:`t_alert_level`         | ERROR           |
++-------------------------+------------------------------+-----------------+
+| rid                     | :ref:`t_alert_level`         | NO_ALERT        |
++-------------------------+------------------------------+-----------------+
+| rdata                   | :ref:`t_alert_level`         | NO_ALERT        |
++-------------------------+------------------------------+-----------------+
+| rresp                   | :ref:`t_alert_level`         | NO_ALERT        |
++-------------------------+------------------------------+-----------------+
+| rlast                   | :ref:`t_alert_level`         | NO_ALERT        |
++-------------------------+------------------------------+-----------------+
+| ruser                   | :ref:`t_alert_level`         | NO_ALERT        |
++-------------------------+------------------------------+-----------------+
 
 .. code-block::
 
-    shared_axi_vvc_config(C_VVC_INDEX).unwanted_activity_severity := NO_ALERT;
+    -- Disable unwanted transaction checking
+    shared_axi_vvc_config(C_VVC_INDEX).unwanted_transaction_checking_enabled := FALSE;
+
+    -- Set severity of alert for each signal
+    shared_axi_vvc_config(C_VVC_INDEX).unwanted_transaction_severity.rdata  := WARNING;
+    shared_axi_vvc_config(C_VVC_INDEX).unwanted_transaction_severity.rvalid := ERROR;
 
 Note that the ready signals (awready, wready, arready) are not monitored in this VVC. The ready signals are allowed to be set 
-independently of the valid signals (awvalid, wvalid, arvalid), and there is no method to differentiate between the unwanted activity 
-and intended activity. See the AXI4 protocol specification for more information. 
+independently of the valid signals (awvalid, wvalid, arvalid). See the AXI4 protocol specification for more information. 
 
-The unwanted activity detection is ignored when the valid signals (bvalid, rvalid) go low within one clock period after the VVC 
+The unwanted transaction detection is ignored when the valid signals (bvalid, rvalid) go low within one clock period after the VVC 
 becomes inactive. This is to handle the situation when the read command exits before the next rising edge, causing signal transitions 
 during the first clock cycle after the VVC is inactive. 
 
-For AXI4 VVC, the unwanted activity detection is enabled by default with severity ERROR.
+For AXI4 VVC, the unwanted transaction detection is enabled by default.
 
-More information can be found in :ref:`Essential Mechanisms - Unwanted Activity Detection <vvc_framework_unwanted_activity>`.
+More information can be found in :ref:`Essential Mechanisms - Unwanted Transaction Detection <vvc_framework_unwanted_transaction>`.
 
 
 Compilation

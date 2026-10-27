@@ -260,12 +260,12 @@ the sequencer while waiting, but not the VVCs, so they can continue to receive c
     await_completion(ALL_OF, my_vvc_list, 1 ms, CLEAR_LIST, "Wait for any VVC in the list to finish", C_SCOPE); -- can be used without ALL_OF, clear v_vvc_list entries
 
     -- Example, wait for a specific VVC to finish:
-    await_completion(SBI_VVCT, 1, "Waiting for SBI to finish.", C_SCOPE);
-    await_completion(UART_VVCT, 1, TX, "Waiting for UART RX to finish.", C_SCOPE);
-    await_completion(I2C_VVCT, ALL_INSTANCES, "Waiting for all I2C VVCs to finish.", C_SCOPE);
+    await_completion(SBI_VVCT, 1, 1 ms, "Waiting for SBI to finish.", C_SCOPE);
+    await_completion(UART_VVCT, 1, TX, 1 ms, "Waiting for UART RX to finish.", C_SCOPE);
+    await_completion(I2C_VVCT, ALL_INSTANCES, 1 ms, "Waiting for all I2C VVCs to finish.", C_SCOPE);
 
     -- Example, wait for a specific VVC command index to finish:
-    await_completion(SBI_VVCT, 1, v_cmd_idx, "Waiting for SBI cmd " & to_string(v_cmd_idx) & " to finish.", C_SCOPE);
+    await_completion(SBI_VVCT, 1, v_cmd_idx, 1 ms, "Waiting for SBI cmd " & to_string(v_cmd_idx) & " to finish.", C_SCOPE);
 
     -- Example, broadcast to all VVCs (ALL_VVCS):
     await_completion(ALL_VVCS, 1 ms, "Wait for all the VVCs to finish", C_SCOPE);
@@ -1342,8 +1342,8 @@ depending on one's needs there are some recommended approaches for how to utiliz
        scoreboard.
     #. Transaction info can be used in a DUT Model process that monitors and decodes the actual transaction info data in the test 
        harness. The DUT Model will use the decoded transaction info and add expected data to the VVC scoreboard on the DUT 
-       receiving side, e.g. to the SBI_VVC_SB while a SBI VVC is responsible for performing the DUT read access and check received 
-       data with SBI_VVC_SB. See :ref:`Transaction Info Purpose <vvc_framework_transaction_info_purpose>`, example C, for how a 
+       receiving side, e.g. to the sbi_vvc_sb while a SBI VVC is responsible for performing the DUT read access and check received 
+       data with sbi_vvc_sb. See :ref:`Transaction Info Purpose <vvc_framework_transaction_info_purpose>`, example C, for how a 
        DUT Model will appear in the test harness.
 
 .. _vvc_framework_transaction_info_mechanism:
@@ -1382,14 +1382,14 @@ Figure 6 uses aliasing to simplify and improve code readability, while Figure 7 
         if sbi_transaction_trigger'event then
           if sbi_transaction_info.operation = READ and sbi_transaction_info.transaction_status = COMPLETED then
             v_sb_element := sbi_transaction_info.data(C_DATA_WIDTH-1 downto 0);
-            SBI_VVC_SB.check_received(C_SBI_VVC_1, v_sb_element);
+            sbi_vvc_sb.check_received(C_SBI_VVC_1, v_sb_element);
           end if;
         end if;
 
         if uart_rx_transaction_trigger'event then
           if uart_rx_info.operation = RECEIVE and uart_rx_info.transaction_status = COMPLETED then
             v_sb_element := uart_rx_info.data(C_DATA_WIDTH-1 downto 0);
-            UART_VVC_SB.check_received(C_UART_VVC_1, v_sb_element);
+            uart_vvc_sb.check_received(C_UART_VVC_1, v_sb_element);
           end if;
         end if;
 
@@ -1412,13 +1412,13 @@ these scoreboard approaches are already performed by the VVCs.
 
         if global_sbi_vvc_transaction_trigger(C_SBI_VVC_1)'event then
           if shared_sbi_vvc_transaction_info(C_SBI_VVC_1).bt.operation = WRITE and shared_sbi_vvc_transaction_info(C_SBI_VVC_1).bt.transaction_status = IN_PROGRESS then
-            UART_VVC_SB.add_expected(shared_sbi_vvc_transaction_info(C_SBI_VVC_1).bt.data(C_DATA_WIDTH-1 downto 0));
+            uart_vvc_sb.add_expected(shared_sbi_vvc_transaction_info(C_SBI_VVC_1).bt.data(C_DATA_WIDTH-1 downto 0));
           end if;
         end if;
 
         if global_uart_vvc_transaction_trigger(TX, C_UART_VVC_1)'event then
           if shared_uart_vvc_transaction_info(TX, C_UART_VVC_1).bt.operation = TRANSMIT and shared_uart_vvc_transaction_info(TX, C_UART_VVC_1).bt.transaction_status = IN_PROGRESS then
-            SBI_VVC_SB.add_expected(shared_uart_vvc_transaction(TX, C_UART_VVC_1).bt.data(C_DATA_WIDTH-1 downto 0));
+            sbi_vvc_sb.add_expected(shared_uart_vvc_transaction(TX, C_UART_VVC_1).bt.data(C_DATA_WIDTH-1 downto 0));
           end if;
         end if;
 
@@ -1460,7 +1460,7 @@ record element.
                 to_string_element => avalon_st_element_to_string);
     use avalon_st_sb_pkg.all;
 
-    shared variable AVALON_ST_VVC_SB : avalon_st_sb_pkg.t_generic_sb;
+    shared variable avalon_st_vvc_sb : avalon_st_sb_pkg.t_generic_sb;
     ...
     p_vvc_sb_support : process
       -- transaction info handles
@@ -1479,7 +1479,7 @@ record element.
           if avalon_st_transaction_info.operation = RECEIVE and avalon_st_transaction_info.transaction_status = COMPLETED then
             v_sb_element.channel_value := avalon_st_transaction_info.channel_value(C_CH_WIDTH-1 downto 0);
             v_sb_element.data_array    := avalon_st_transaction_info.data_array(0 to C_ARRAY_LENGTH-1)(C_WORD_WIDTH-1 downto 0);
-            AVALON_ST_VVC_SB.check_received(C_AVALON_ST_VVC_1, v_sb_element);
+            avalon_st_vvc_sb.check_received(C_AVALON_ST_VVC_1, v_sb_element);
           end if;
         end if;
 
@@ -1601,74 +1601,75 @@ The profile names are defined in the type :ref:`t_data_routing`, which is define
 | <user-defined>             |                                                                                                   |
 +----------------------------+---------------------------------------------------------------------------------------------------+
 
-.. _vvc_framework_unwanted_activity:
+.. _vvc_framework_unwanted_transaction:
 
-Unwanted Activity Detection
+Unwanted Transaction Detection
 ==================================================================================================================================
-The UVVM VVCs support detection of unwanted or unexpected activity from the DUT. This mechanism will give an alert if the DUT 
-generates any unexpected bus activity. It assures that no data is output from the DUT when it is not expected, 
-e.g. receive/read/check/expect VVC methods are not called. Once the VVCs are inactive, they start to monitor continuously on the 
-DUT outputs. When unwanted activity is detected, the VVCs issue an alert of severity.
+The UVVM VVCs support detection of unwanted or unexpected transactions from the DUT. This mechanism will give an alert if the DUT 
+generates any unexpected bus activity that signals a transaction, e.g. asserting the valid signal. It assures that no data is 
+output from the DUT when it is not expected, e.g. receive/read/check/expect VVC methods are not called. Once the VVCs are inactive, 
+they start to monitor continuously on the DUT outputs. When unwanted transactions are detected, the VVCs issue an alert of severity.
 
-All VVC method packages contain a configuration in the t_vvc_config type for setting the severity level for alerting unwanted 
-activity. The default value for this configuration is set to ERROR in the adaptations_pkg, e.g. ::
+All VVC method packages contain a configuration in the t_vvc_config type for enabling unwanted transaction detection. The default 
+value for this configuration is set to true in the adaptations_pkg, e.g. ::
 
-    constant C_UNWANTED_ACTIVITY_SEVERITY : t_alert_level := ERROR;
+    constant C_UNWANTED_TRANSACTION_CHECKING_DEFAULT : boolean := true;
 
-The unwanted activity detection can be configured from the central testbench sequencer, where the severity of alert can be 
-changed to a different value. To disable this feature in the testbench, e.g. for UART VVC: ::
+The unwanted transaction detection can be configured from the central testbench sequencer, where the severity of alert can be 
+changed individually for each monitored signal, e.g. for GMII VVC: ::
 
-    shared_uart_vvc_config(RX, C_VVC_INDEX).unwanted_activity_severity := NO_ALERT;
+    shared_gmii_vvc_config(RX, C_VVC_INDEX).unwanted_transaction_severity.rxd  := WARNING;
+    shared_gmii_vvc_config(RX, C_VVC_INDEX).unwanted_transaction_severity.rxdv := ERROR;
 
-If multiple slave VVCs with a common bus are connected to the same master DUT as seen in Figure 2, unwanted activity detection 
+If multiple slave VVCs with a common bus are connected to the same master DUT as seen in Figure 2, unwanted transaction detection 
 will give alerts on the inactive slave VVCs. For instance, when the data is expected on I2C slave VVC 1, an alert will be 
 initiated from I2C slave VVC 2 and 3.
 
 .. figure:: /images/vvc_framework/multiple_slave_VVCs_example.png
-   :alt: False unwanted activity detection
+   :alt: False unwanted transaction detection
    :width: 550pt
    :align: center
 
-   Figure 2 A false unwanted activity detection scenario when multiple slave VVCs are connected to the same master DUT
+   Figure 2 A false unwanted transaction detection scenario when multiple slave VVCs are connected to the same master DUT
 
-In order to avoid getting any false alerts, the unwanted activity must be disabled on the inactive VVCs 
-as shown below example. Note that the unwanted activity detection must be enabled again after the data transfer is complete.
+In order to avoid getting any false alerts, the unwanted transaction must be disabled on the inactive VVCs 
+as shown below example. Note that the unwanted transaction detection must be enabled again after the data transfer is complete.
 
 .. code-block::
 
     -- Example:
     -- Expect data on I2C slave VVC 1.
-    shared_i2c_vvc_config(2).unwanted_activity_severity := NO_ALERT; -- Disable unwanted activity on slave VVC 2
-    shared_i2c_vvc_config(3).unwanted_activity_severity := NO_ALERT; -- Disable unwanted activity on slave VVC 3
+    shared_i2c_vvc_config(2).unwanted_transaction_checking_enabled := false; -- Disable unwanted transaction on slave VVC 2
+    shared_i2c_vvc_config(3).unwanted_transaction_checking_enabled := false; -- Disable unwanted transaction on slave VVC 3
     sbi_write(SBI_VVCT, 0, C_ADDR_TX_DATA, x"55", "Transmit data");
     i2c_slave_check(I2C_VVCT, 1, x"55", "Slave check data");
     await_completion(I2C_VVCT, 1, 50 ms);
-    shared_i2c_vvc_config(2).unwanted_activity_severity := ERROR;    -- Enable unwanted activity on slave VVC 2
-    shared_i2c_vvc_config(3).unwanted_activity_severity := ERROR;    -- Enable unwanted activity on slave VVC 3
+    shared_i2c_vvc_config(2).unwanted_transaction_checking_enabled := true;  -- Enable unwanted transaction on slave VVC 2
+    shared_i2c_vvc_config(3).unwanted_transaction_checking_enabled := true;  -- Enable unwanted transaction on slave VVC 3
 
     -- Expect data on I2C slave VVC 2
-    shared_i2c_vvc_config(1).unwanted_activity_severity := NO_ALERT; -- Disable unwanted activity on slave VVC 1
-    shared_i2c_vvc_config(3).unwanted_activity_severity := NO_ALERT; -- Disable unwanted activity on slave VVC 3
+    shared_i2c_vvc_config(1).unwanted_transaction_checking_enabled := false; -- Disable unwanted transaction on slave VVC 1
+    shared_i2c_vvc_config(3).unwanted_transaction_checking_enabled := false; -- Disable unwanted transaction on slave VVC 3
     sbi_write(SBI_VVCT, 0, C_ADDR_TX_DATA, x"55", "Transmit data");
     i2c_slave_check(I2C_VVCT, 2, x"55", "Slave check data");
     await_completion(I2C_VVCT, 2, 50 ms);
-    shared_i2c_vvc_config(1).unwanted_activity_severity := ERROR;    -- Enable unwanted activity on slave VVC 1
-    shared_i2c_vvc_config(3).unwanted_activity_severity := ERROR;    -- Enable unwanted activity on slave VVC 3
+    shared_i2c_vvc_config(1).unwanted_transaction_checking_enabled := true;  -- Enable unwanted transaction on slave VVC 1
+    shared_i2c_vvc_config(3).unwanted_transaction_checking_enabled := true;  -- Enable unwanted transaction on slave VVC 3
 
     -- Expect data on I2C slave VVC 3
-    shared_i2c_vvc_config(1).unwanted_activity_severity := NO_ALERT; -- Disable unwanted activity on slave VVC 1
-    shared_i2c_vvc_config(2).unwanted_activity_severity := NO_ALERT; -- Disable unwanted activity on slave VVC 2
+    shared_i2c_vvc_config(1).unwanted_transaction_checking_enabled := false; -- Disable unwanted transaction on slave VVC 1
+    shared_i2c_vvc_config(2).unwanted_transaction_checking_enabled := false; -- Disable unwanted transaction on slave VVC 2
     sbi_write(SBI_VVCT, 0, C_ADDR_TX_DATA, x"55", "Transmit data");
     i2c_slave_check(I2C_VVCT, 3, x"55", "Slave check data");
     await_completion(I2C_VVCT, 3, 50 ms);
-    shared_i2c_vvc_config(1).unwanted_activity_severity := ERROR;    -- Enable unwanted activity on slave VVC 1
-    shared_i2c_vvc_config(2).unwanted_activity_severity := ERROR;    -- Enable unwanted activity on slave VVC 2
+    shared_i2c_vvc_config(1).unwanted_transaction_checking_enabled := true;  -- Enable unwanted transaction on slave VVC 1
+    shared_i2c_vvc_config(2).unwanted_transaction_checking_enabled := true;  -- Enable unwanted transaction on slave VVC 2
 
 When the reset signal is set, signal transitions may occur from the uninitialized value 'U'. Additionally, using pull-up or pull-down 
 resistors in the design may cause signal transitions from the weak 1 state 'H' to the logic high '1' or from the weak 0 state 'L' 
 to the logic low '0', and vice versa. It is also possible for signal transitions to occur from the unknown state 'X' to the logic low '0' 
 or logic high '1' when simulating Verilog components during the initialization. These are all intended behaviors that should not be monitored by 
-the unwanted activity detection. The signal transitions that are excluded from unwanted activity detection are summarized below.
+the unwanted transaction detection. The signal transitions that are excluded from unwanted transaction detection are summarized below.
 
 +----------------+-----------------------------------+
 | From           | To                                |
@@ -1686,16 +1687,17 @@ the unwanted activity detection. The signal transitions that are excluded from u
 | 'X'            | '0', '1'                          |
 +----------------+-----------------------------------+
 
-For a VVC specific description of this feature, see the Unwanted Activity Detection section in each VVC QuickRef.
+For a VVC specific description of this feature, see the Unwanted Transaction Detection section in each VVC's documentation.
 
 .. note::
 
-    * For VVCs with a valid signal, the unwanted activity detection is ignored when the valid signal goes low within one clock period 
-      after the VVC becomes inactive. This is to handle the situation when the read command exits before the next rising edge, 
-      causing signal transitions during the first clock cycle after the VVC is inactive. See each VVC QuickRef for more information.
-    * The ready signals in all interfaces, e.g. tready in AXI-Stream, are not monitored in unwanted activity detection when the 
-      VVC is a master device. The ready signal is allowed to be set independently of the valid signal, and there is no method to 
-      differentiate between the unwanted activity and intended activity. See each VVC QuickRef for more information.
+    * For VVCs with a valid signal, the unwanted transaction detection is ignored when the valid signal goes low within one clock
+      period after the VVC becomes inactive. This is to handle the situation when the read command exits before the next rising 
+      edge, causing signal transitions during the first clock cycle after the VVC is inactive. See each VVC's documentation for 
+      more information.
+    * The ready signals in all interfaces, e.g. tready in AXI-Stream, are not monitored in unwanted transaction detection when the 
+      VVC is a master device. The ready signal is allowed to be set independently of the valid signal. See each VVC's documentation 
+      for more information.
 
 .. _vvc_framework_compile_scripts:
 
@@ -1909,6 +1911,7 @@ C_VVC_LABELS      A record of constants, e.g. name and channel, used in multiple
 * Signal ``last_cmd_idx_executed``. Stores the last command index executed by this VVC, necessary for the await_completion mechanism.
 * Signal ``terminate_current_cmd``. Command termination record (fields: set, reset, is_active). Where set and reset signal fields 
   are used to toggle is_active. Used as inter process flags.
+* Signal ``entry_num_in_vvc_activity_register``. ID of the VVC after registering in the VVC activity register.
 * Shared variable ``command_queue``. Queue of commands to be executed in sequence towards the DUT.
 * Shared variable ``result_queue``. Queue of data received from the DUT which can be retrieved via the fetch_result command.
 * The aliases are defined to allow common and simplified names.
@@ -1935,6 +1938,7 @@ next command from the sequencer.
 
 | Step 0
 | - ``initialize_interpreter()``. Initializes parameters to default passive/initial values (e.g. terminate_current_cmd.set := '0').
+| - Initializes shared_vvc_last_received_cmd_idx.
 | - ``priv_register_vvc()``. Registers the VVC in the VVC activity register. This mechanism is used to detect whether a VVC is 
   active executing a command or inactive waiting for a new command, and is used by the await_completion mechanism.
 
@@ -1943,6 +1947,7 @@ next command from the sequencer.
 |   - Waits for a command from the central sequencer. Continues on matching VVC, instance index, name and channel.
 |   - Log at start using ID_CMD_INTERPRETER_WAIT and at the end using ID_CMD_INTERPRETER.
 |   - Will only accept exact matches of instance index and name, and either the correct address or "ALL_CHANNELS".
+| - Updates shared_vvc_last_received_cmd_idx.
 
 | Step 2a (only if command type is QUEUED)
 | - ``put_command_on_queue()``. Puts the received command on the VVC queue (for later retrieval by the Command Executor).
@@ -1968,6 +1973,7 @@ command queue.
 | - ``initialize_executor()``. Initializes parameters to default passive/initial values (e.g. terminate_current_cmd.reset := '0').
 | - Initializes the internal VVC scoreboard by setting up the scope, configuration and enabling it **(only if the Scoreboard 
   feature was selected).**
+  - Sets the randomization seeds (if applicable).
 
 | Step 1
 | - ``update_vvc_activity_register``
@@ -1978,24 +1984,27 @@ command queue.
 |   - Fetches a command from the queue (waits until available if needed).
 |   - Sets relevant flag parameters.
 |   - Log command using ID_CMD_EXECUTOR (or log using ID_CMD_EXECUTOR_WAIT if queue is empty).
-| - Insert inter-BFM delay if requested.
-|   - ``insert_inter_bfm_delay_if_requested()`` inserts either start-to-start or finish-to-start delay between BFM accesses if 
-      this is set in the *inter_bfm_delay* parameter in 'vvc_config'. Logs information using ID_CMD_EXECUTOR.
-|   - If the command currently being processed by the executor is a BFM access, a timestamp will be stored in 
-      *v_timestamp_start_of_current_bfm_access*.
+| - Checks if the command is a BFM access
+| - ``insert_inter_bfm_delay_if_requested()``
+|   - Inserts either start-to-start or finish-to-start delay between BFM accesses if this is set in the *inter_bfm_delay* parameter
+|     in 'vvc_config'. Logs information using ID_CMD_EXECUTOR.
+| - If the command currently being processed by the executor is a BFM access, a timestamp will be stored in 
+    *v_timestamp_start_of_current_bfm_access*.
 
 | Step 2
 | - Executes a command depending on the requested command/operation.
+|   - The VVC Transaction Info is set before and after the command is executed with IN_PROGRESS and COMPLETED status.
 |   - *terminate_current_cmd* is only checked inside operations that require multiple BFM accesses - like for instance a POLL_UNTIL 
       command.
 |   - ``store_result()`` is executed for any BFM, where it makes sense for you to store the result of a BFM access. In our example 
       for SBI we think it only makes sense for 'READ'.
 |   - Logging as defined by your BFM.
-| - Update the BFM access timestamps if this was a BFM access.
-|   - *v_timestamp_of_last_bfm_access* is set to 'now'.
+| - Updates the BFM access timestamps if this was a BFM access.
+|   - *v_timestamp_end_of_last_bfm_access* is set to 'now'.
 |   - *v_timestamp_start_of_last_bfm_access* is set to *v_timestamp_start_of_current_bfm_access*.
 | - The *terminate_current_cmd* flag is reset if it has been active.
-| - Update the *last_cmd_idx_executed* variable with the current command index (*v_cmd.cmd_idx*).
+| - Updates the *last_cmd_idx_executed* variable with the current command index (*v_cmd.cmd_idx*).
+| - Resets the VVC Transaction Info back to default values
 
 Command Terminator
 ----------------------------------------------------------------------------------------------------------------------------------
@@ -2004,12 +2013,12 @@ The command terminator concurrent procedure sets the *is_active* flag based on t
 Clock period
 ----------------------------------------------------------------------------------------------------------------------------------
 Finds the clock period of the clk signal. This is only necessary when there is a 'valid' signal, such as tvalid in the AXI4-stream 
-protocol, in order to ignore a false trigger of the unwanted activity detection mechanism. **(Only if the Unwanted activity 
+protocol, in order to ignore a false trigger of the unwanted transaction detection mechanism. **(Only if the Unwanted transaction 
 detection feature was selected).**
 
-Unwanted activity
+Unwanted transaction
 ----------------------------------------------------------------------------------------------------------------------------------
-Monitors unwanted activity from the DUT. For more information see :ref:`vvc_framework_unwanted_activity`. **(Only if the Unwanted 
+Monitors unwanted transaction from the DUT. For more information see :ref:`vvc_framework_unwanted_transaction`. **(Only if the Unwanted 
 activity detection feature was selected).** 
 
 Additional for multi-channel VVCs
@@ -2172,7 +2181,8 @@ the VVC/BFM configuration will differ for each VVC. The record contents are:
     * result_queue_count_*: Result queue specifications. DEPRECATED, use instead entity generic constants.
     * bfm_config: A record containing all settings for the BFM, e.g. clock periods, message IDs etc.
     * msg_id_panel: The message ID panel that the VVC shall use.
-    * unwanted_activity_severity: Severity of alert for the unwanted activity detection.
+    * unwanted_transaction_checking_enabled: Enable unwanted transaction checking.  **(Only if the Unwanted Transaction Detection feature was selected).**
+    * unwanted_transaction_severity: Severity of alert to be initiated if unwanted transaction on the DUT outputs is detected.  **(Only if the Unwanted Transaction Detection feature was selected).**
 
 A constant C_<NAME>_VVC_CONFIG_DEFAULT is defined for this type to use as default value.
 
@@ -2183,7 +2193,7 @@ record can contain anything that is relevant for the outside, and it is recommen
 
     * current_cmd_idx: The current command index being processed in the executor.
     * previous_cmd_idx: The previous command index being processed in the executor.
-    * pending_cmd_idx: The number of pending commands to be processed by the executor.
+    * pending_cmd_cnt: The number of pending commands to be processed by the executor.
 
 A constant C_VVC_STATUS_DEFAULT is defined for this type to use as default value.
 
@@ -2195,7 +2205,7 @@ value.
 A shared variable array ``shared_<name>_vvc_status`` of type **t_vvc_status** is declared and all elements are set to the default 
 value.
 
-The internal VVC Scoreboard ``<NAME>_VVC_SB`` is declared here as a shared variable. **(only if the Scoreboard feature was selected).**
+The internal VVC Scoreboard ``<name>_vvc_sb`` is declared here as a shared variable. **(only if the Scoreboard feature was selected).**
 
 VVC Dedicated Methods
 ----------------------------------------------------------------------------------------------------------------------------------
@@ -2216,6 +2226,7 @@ The method bodies are quite similar for all VVC commands:
     #. First, the shared_vvc_cmd record is set to its default value, resetting the data from any potential previous command.
     #. The general VVC fields (e.g. name and instance index) are set using the UVVM method set_general_target_and_command_fields().
     #. The VVC specific fields are set in the shared variable ``shared_vvc_cmd``. This means e.g. address and data fields.
+    #. The parent_msg_id_panel is used as the current msg_id_panel if the procedure was called from a hierarchical VVC.
     #. The command is sent to all VVCs using the UVVM method send_command_to_vvc(VVCT).
 
 All VVC instances and channels of this type receive the command, but only the VVC with the correct instance index, channel and 
@@ -2355,7 +2366,7 @@ The VVC support package contains procedures that are compiled into and used in t
 and interpreter, and the interpreter procedures called interpreter_*, e.g. interpreter_fetch_result(). For more information 
 about the interpreter_* procedures, please see :ref:`vvc_framework_methods`. For more information about the other methods in this 
 package, see :ref:`vvc_framework_name_vvc`. In addition to the procedures, the td_vvc_entity_support_pkg.vhd also contains types 
-for VVC labels and executor results. The result array is also defined and its shared variable is instantiated in this package.
+for VVC labels.
 
 
 .. _vvc_generator_script:
@@ -2392,7 +2403,7 @@ The script will query the user for information about the VVC during the script:
 
      * **Scoreboard**
      * **Transaction info**
-     * **Unwanted activity detection**
+     * **Unwanted transaction detection**
 
 #. Afterwards, the script will ask to select the **number of concurrent channels** to use in the VVC. Channels are a way of 
    implementing more than one concurrent process which will use the BFM procedures. For example, when implementing a VVC for a bus 
@@ -2410,14 +2421,14 @@ The script will query the user for information about the VVC during the script:
 
      * If VVC has 1 concurrent channel: whether the **VVC shall have multiple executors**. If you type 'n' and Enter, the script 
        will not need any further information. If you type 'y' and Enter, it will ask to type a number between 2 and 3 for the 
-       **number of concurrent executors** including the cmd_executor. Then, the script will ask to **name each executor**, one at 
+       **number of concurrent executors** including the p_cmd_executor. Then, the script will ask to **name each executor**, one at 
        a time. The executor names follow the same naming restrictions as the VVC name, stated in step 1.
 
      * If VVC has several concurrent channels: **how many channels shall have multiple executors**. If you want a single executor 
        in each channel press Enter to select the default '0', the script will not need any further information. Otherwise, type the 
        number of channels which shall have multiple executors and press Enter. The script will then ask for each channel, whether 
        it **shall contain multiple executors** for which you can answer 'y' or 'n'. If you answer 'y' for a given channel, you will 
-       be then asked to type a number between 2 and 3 for the **number of concurrent executors** including the cmd_executor. Then, 
+       be then asked to type a number between 2 and 3 for the **number of concurrent executors** including the p_cmd_executor. Then, 
        the script will ask to **name each executor**, one at a time. The executor names follow the same naming restrictions as the 
        VVC name, stated in step 1.
 

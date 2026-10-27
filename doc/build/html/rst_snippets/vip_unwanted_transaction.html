@@ -8,14 +8,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>&lt;no title&gt; &mdash; UVVM  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=8abdc7a9" />
 
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="../_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -53,6 +53,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../optimized_rand.html">Optimized Randomization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../uvvm_assertions.html">UVVM Assertions (BETA)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../vvc_framework.html">VVC Framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../vip_apb.html">External VIP APB</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../vip_avalon_mm.html">Bitvis VIP Avalon-MM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../vip_avalon_st.html">Bitvis VIP Avalon-ST</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../vip_axi.html">Bitvis VIP AXI4</a></li>
@@ -73,6 +74,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../vip_uart.html">Bitvis VIP UART</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../vip_wishbone.html">Bitvis VIP Wishbone</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tool_compatibility.html">Tool Compatibility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../fusesoc.html">FuseSoC support</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq.html">Frequently Asked Questions</a></li>
 </ul>
 
@@ -92,7 +94,7 @@
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active">&lt;no title&gt;</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../_sources/rst_snippets/vip_unwanted_activity.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/rst_snippets/vip_unwanted_transaction.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -100,12 +102,14 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <p>This VVC supports detection of unwanted activity from the DUT. This mechanism will give an alert if the DUT generates any unexpected
-bus activity. It assures that no data is output from the DUT when it is not expected, i.e. read/receive/check/expect VVC methods are
-not called. Once the VVC is inactive, it starts to monitor continuously on the DUT outputs. When unwanted activity is detected, the
-VVC issues an alert.</p>
-<p>The unwanted activity detection can be configured from the central testbench sequencer, where the severity of alert can be changed
-to a different value. To disable this feature in the testbench, e.g.</p>
+  <p>This VVC supports detection of unwanted transactions from the DUT. This mechanism will give an alert if the DUT generates any unexpected
+bus activity that signals a transaction, e.g. asserting the valid signal. It assures that no data is output from the DUT when it is not
+expected, i.e. read/receive/check/expect VVC methods are not called. Once the VVC is inactive, it starts to monitor continuously on the
+DUT outputs. When an unwanted transaction is detected, the VVC issues an alert.</p>
+<p>This mechanism can also monitor other signals coming from the DUT and generate alerts if any unexpected activity is detected. You can
+enable this by configuring the corresponding <code class="docutils literal notranslate"><span class="pre">unwanted_transaction_severity</span></code> for each signal you want to monitor.</p>
+<p>The unwanted transaction detection can be configured from the central testbench sequencer, where the severity of alert can be changed
+to a different value. To configure this feature in the testbench, e.g.</p>
 
 
            </div>
