@@ -69,21 +69,8 @@ done
 # Compile UVVM BFMs
 echo ""
 echo "Compiling UVVM BFMs..."
-bfm_file_list='avalon_mm_bfm_pkg.vhd
-	      avalon_st_bfm_pkg.vhd
-	      axi_bfm_pkg.vhd
-          axilite_bfm_pkg.vhd
-	      axistream_bfm_pkg.vhd
-	      gmii_bfm_pkg.vhd
-	      gpio_bfm_pkg.vhd
-	      i2c_bfm_pkg.vhd
-	      rgmii_bfm_pkg.vhd
-	      sbi_bfm_pkg.vhd
-	      spi_bfm_pkg.vhd
-	      uart_bfm_pkg.vhd
-          wishbone_bfm_pkg.vhd'
-
 part_path="src_bfm"
-for file_name in $bfm_file_list; do
+for file_path in $SRC_PATH/$part_path/*.vhd; do
+    file_name=$(basename $file_path)
     compile_file
 done
